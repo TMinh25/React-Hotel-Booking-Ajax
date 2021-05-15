@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { numberWithCommas } from '../../utils';
 
-const RoomCard = ({ data }) => {
+const RoomCard = ({ path, data }) => {
   return (
     <div className="room-card">
       <div
@@ -13,7 +14,7 @@ const RoomCard = ({ data }) => {
         <Link
           className="room-card__link"
           to={{
-            pathname: `/room/${data.id}`,
+            pathname: `/room/${path}`,
             state: { roomID: data.id },
           }}
         >
@@ -21,10 +22,13 @@ const RoomCard = ({ data }) => {
             <h2 className="room-card__title">{data.name}</h2>
             <div className="room-card__prices">
               <span className="room-card__price-l">
-                NT${data.normalDayPrice} <span className="room-card__price-s">weekday</span>
+                <span className="room-card__price-s">ngày thường</span>
+                <br />
+                {numberWithCommas(data.normalDayPrice)} VNĐ
               </span>
               <span className="room-card__price-s room-card__price-s--gray">
-                NT${data.holidayPrice} weekend
+                {data.holidayPrice &&
+                  'cuối tuần ' + numberWithCommas(data.holidayPrice) + ' VNĐ'}
               </span>
             </div>
           </div>

@@ -1,0 +1,111 @@
+{
+  "success": true,
+  "room": [
+    {
+      "id": "g0mYhN6ignMz4VYW7eiWsXZN8DHolHzH8LuVmM6hq5h6BrrqrLMw4aJgHv7LZ3RQ",
+      "name": "Deluxe Single Room",
+      "imageUrl": [
+        "https://images.unsplash.com/photo-1564182379166-8fcfdda80151?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1951&q=80",
+        "https://images.unsplash.com/photo-1528908929486-dfaa209c6986?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80",
+        "https://images.unsplash.com/photo-1558211583-03ed8a0b3d5f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2134&q=80"
+      ],
+      "normalDayPrice": 1899,
+      "holidayPrice": 2000,
+      "descriptionShort": {
+        "GuestMin": 1,
+        "GuestMax": 1,
+        "Bed": ["Small Double"],
+        "Private-Bath": 1,
+        "Footage": 22
+      },
+      "description": "Deluxe Single Room is only reserved for one guest. There is a bedroom with a small double size bed and a private bathroom. Everything you need prepared for you: sheets and blankets, towels, soap and shampoo, hairdryer are provided. In the room there is AC and of course WiFi.",
+      "checkInAndOut": {
+        "checkInEarly": "15:00",
+        "checkInLate": "19:00",
+        "checkOut": "11:00"
+      },
+      "amenities": {
+        "Wi-Fi": true,
+        "Breakfast": true,
+        "Mini-Bar": true,
+        "Room-Service": true,
+        "Television": true,
+        "Air-Conditioner": true,
+        "Refrigerator": true,
+        "Sofa": false,
+        "Great-View": false,
+        "Smoke-Free": true,
+        "Child-Friendly": false,
+        "Pet-Friendly": true
+      }
+    }
+  ],
+  "booking": [
+    { "name": "Stark", "tel": "0920774983", "date": "2019-10-01" },
+    { "name": "Stark", "tel": "0920774983", "date": "2019-10-02" },
+    { "name": "Stark", "tel": "0920774983", "date": "2019-10-03" },
+    { "name": "Kitty", "tel": "000", "date": "2019-10-19" },
+    { "name": "Kitty", "tel": "000", "date": "2019-10-20" },
+    { "name": "Tin Tin", "tel": "090", "date": "2019-10-15" },
+    { "name": "Tin Tin", "tel": "090", "date": "2019-10-16" },
+    { "name": "Tin Tin", "tel": "090", "date": "2019-10-17" },
+    { "name": "1123", "tel": "06168496456", "date": "2019-10-22" },
+    { "name": "1123", "tel": "06168496456", "date": "2019-10-23" },
+    { "name": "909", "tel": "02123456", "date": "2019-11-12" },
+    { "name": "909", "tel": "02123456", "date": "2019-11-13" },
+    { "name": "abc", "tel": "0818000000", "date": "2020-01-11" },
+    { "name": "abc", "tel": "0818000000", "date": "2020-01-12" },
+    { "name": "sdfsf", "tel": "2423423423", "date": "2020-02-11" },
+    { "name": "sdfsf", "tel": "2423423423", "date": "2020-02-12" },
+    { "name": "Yi Xin", "tel": "1235646589", "date": "2020-02-17" },
+    { "name": "Yi Xin", "tel": "1235646589", "date": "2020-02-18" },
+    { "name": "af", "tel": "3432424", "date": "2020-02-19" },
+    { "name": "af", "tel": "3432424", "date": "2020-02-20" },
+    { "name": "test", "tel": "123", "date": "2020-03-31" },
+    { "name": "test", "tel": "123", "date": "2020-04-01" },
+    { "name": "jashon", "tel": "0916253281", "date": "2020-04-21" },
+    { "name": "jashon", "tel": "0916253281", "date": "2020-04-22" },
+    { "name": "marie", "tel": "54468512656", "date": "2020-04-29" },
+    { "name": "marie", "tel": "54468512656", "date": "2020-04-30" },
+    { "name": "555555", "tel": "55555", "date": "2020-05-19" },
+    { "name": "555555", "tel": "55555", "date": "2020-05-20" },
+    { "name": "qweqwqqwewq", "tel": "23213123", "date": "2020-05-15" },
+    { "name": "qweqwqqwewq", "tel": "23213123", "date": "2020-05-16" },
+    { "name": "qweqwqqwewq", "tel": "23213123", "date": "2020-05-17" },
+    { "name": "PP", "tel": "99989", "date": "2020-06-23" },
+    { "name": "PP", "tel": "99989", "date": "2020-06-24" },
+    { "name": "John Doe", "tel": "9200000000", "date": "2020-08-28" },
+    { "name": "John Doe", "tel": "9200000000", "date": "2020-08-29" },
+    { "name": "John Doe", "tel": "9200000000", "date": "2020-08-30" },
+    { "name": "11", "tel": "11", "date": "2020-09-23" },
+    { "name": "11", "tel": "11", "date": "2020-09-24" },
+    { "name": "vew", "tel": "0973202178", "date": "2020-09-30" },
+    { "name": "vew", "tel": "0973202178", "date": "2020-10-01" },
+    { "name": "jade", "tel": "0988125475", "date": "2020-10-15" },
+    { "name": "jade", "tel": "0988125475", "date": "2020-10-16" },
+    { "name": "jade", "tel": "0988125475", "date": "2020-10-30" },
+    { "name": "jade", "tel": "0988125475", "date": "2020-10-31" },
+    { "name": "minh", "tel": "123123", "date": "2020-11-19" },
+    { "name": "minh", "tel": "123123", "date": "2020-11-20" },
+    { "name": "Ggg", "tel": "35643665", "date": "2020-11-21" },
+    { "name": "Ggg", "tel": "35643665", "date": "2020-11-22" },
+    { "name": "sff", "tel": "6545678765", "date": "2020-11-23" },
+    { "name": "sff", "tel": "6545678765", "date": "2020-11-24" },
+    { "name": "sdsd", "tel": "23232323", "date": "2020-12-11" },
+    { "name": "sdsd", "tel": "23232323", "date": "2020-12-12" },
+    { "name": "S", "tel": "0900000000", "date": "2020-12-17" },
+    { "name": "S", "tel": "0900000000", "date": "2020-12-18" },
+    { "name": "tstest", "tel": "3434343434", "date": "2021-04-11" },
+    { "name": "tstest", "tel": "3434343434", "date": "2021-04-12" },
+    {
+      "name": "Nguy\u1ec5n Tr\u01b0\u1eddng Minh",
+      "tel": "0338658656",
+      "date": "2021-05-14"
+    },
+    {
+      "name": "Nguy\u1ec5n Tr\u01b0\u1eddng Minh",
+      "tel": "0338658656",
+      "date": "2021-05-15"
+    }
+  ]
+}

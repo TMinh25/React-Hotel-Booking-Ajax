@@ -3,7 +3,7 @@
 }
 
 .room-amenities__list {
-  display: grid;
+  display: grid !important;
   grid-template-columns: repeat(2, 1fr);
   padding-top: rem(30);
   border-top: 1px solid $gray-light;
@@ -13,11 +13,12 @@
   display: flex;
   align-items: center;
 
-  &:not(:nth-of-type(n+9)) {
-    margin-bottom: rem(25);
+  &:not(:last-child) {
+    margin-bottom: rem(5);
   }
 
   &.non-available {
+    text-decoration: line-through;
     opacity: 0.25;
   }
 }

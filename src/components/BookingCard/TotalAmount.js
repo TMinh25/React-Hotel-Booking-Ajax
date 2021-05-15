@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { subDays, eachDayOfInterval } from 'date-fns';
+import { numberWithCommas } from '../../utils';
 
 const TotalAmount = props => {
   const { normalDayPrice, holidayPrice, startDate, endDate } = props;
@@ -37,19 +38,27 @@ const TotalAmount = props => {
       <ul className="booking-card__total-list">
         <li className="booking-card__total-item">
           <span className="booking-card__total-text">
-            Weekday ${normalDayPrice} x {totalNormalNights} night(s)
+            Ngày trong tuần <br /> {numberWithCommas(normalDayPrice)} VNĐ x{' '}
+            {totalNormalNights} đêm
           </span>
-          <span className="booking-card__total-text">NT${normalDayPrice * totalNormalNights}</span>
+          <span className="booking-card__total-text">
+            {numberWithCommas(normalDayPrice * totalNormalNights)} VNĐ
+          </span>
         </li>
         <li className="booking-card__total-item">
           <span className="booking-card__total-text">
-            Weekend ${holidayPrice} x {totalHolidayNights} night(s)
+            Ngày cuối tuần <br /> {numberWithCommas(holidayPrice)} VNĐ x{' '}
+            {totalHolidayNights} đêm
           </span>
-          <span className="booking-card__total-text">NT${holidayPrice * totalHolidayNights}</span>
+          <span className="booking-card__total-text">
+            {numberWithCommas(holidayPrice * totalHolidayNights)} VNĐ
+          </span>
         </li>
         <li className="booking-card__total-item">
-          <span className="booking-card__total-text bold">Total</span>
-          <span className="booking-card__total-text bold large">NT${totalPrice}</span>
+          <span className="booking-card__total-text bold">Tổng</span>
+          <span className="booking-card__total-text bold large">
+            {numberWithCommas(totalPrice)} VNĐ
+          </span>
         </li>
       </ul>
     </div>

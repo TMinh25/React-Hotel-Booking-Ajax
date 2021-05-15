@@ -1,0 +1,119 @@
+.form-wrapper {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.form-content {
+  width: 375px;
+  background-color: var(--tertiaryColor);
+  padding: 1rem;
+  border-radius: 4px;
+  form {
+    text-align: center;
+    // input {
+    //   background-color: var(--bg);
+    //   border: 1px solid var(--bg);
+    // }
+    button {
+      background-color: var(--bg);
+      border: 1px solid var(--bg);
+      color: var(--primaryColor);
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
+      margin-top: 1rem;
+    }
+  }
+}
+h2 {
+  padding-left: 1rem;
+  margin-bottom: 1rem;
+}
+input {
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  width: 90%;
+  border-radius: 4px;
+  color: var(--primaryColor);
+}
+.login-signup {
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  p {
+    position: relative;
+    top: 6px;
+    color: var(--secondaryColor);
+    cursor: pointer;
+  }
+}
+@media screen and (max-width: 400px) {
+  .form-content {
+    width: 325px;
+  }
+}
+.login_input {
+  font-family: var(--font), sans-serif !important;
+  font-size: 1rem !important;
+  padding: 0.5rem 1rem !important;
+  margin-bottom: 1rem !important;
+  width: 90% !important;
+  border-radius: 4px !important;
+  color: var(--primaryColor) !important;
+}
+h2 {
+  padding-left: 1rem !important;
+  margin-bottom: 1rem !important;
+}
+.form-content {
+  form {
+    text-align: center !important;
+  }
+}
+.form-content {
+  form {
+    .login_input {
+      background-color: var(--bg) !important;
+      border: 1px solid var(--bg) !important;
+    }
+  }
+}
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: inherit;
+  &:before {
+    padding: 0;
+    margin: 0;
+    box-sizing: inherit;
+  }
+  &:after {
+    padding: 0;
+    margin: 0;
+    box-sizing: inherit;
+  }
+}
+
+.input_manage {
+  display: inline-block;
+  width: 20%;
+  border: 1px solid #e4e4e4;
+  border-radius: 2px;
+  padding: 2;
+  user-select: all;
+}
+
+.table_row {
+  cursor: pointer;
+  &:hover {
+    background: #f0f0f0;
+    color: red;
+  }
+}
+
+.divider {
+  margin: 10px 0 6px 0 !important;
+}

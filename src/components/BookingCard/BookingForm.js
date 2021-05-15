@@ -1,109 +1,123 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { addDays, eachDayOfInterval, format, parseISO } from 'date-fns';
 import { Facebook } from 'react-spinners-css';
+import PropTypes from 'prop-types';
 
 import TotalAmount from './TotalAmount';
 import Modal from '../Modal/index';
-import { apiPostBookingData } from '../../api';
 
-export class BookingForm extends Component {
-  formRef = React.createRef();
+export const BookingForm = props => {
+  const formRef = React.createRef();
 
-  modalRef = React.createRef();
+  const modalRef = React.createRef();
 
-  state = {
-    formData: {
-      guestname: '',
-      tel: '',
-      startDate: null,
-      endDate: null,
-    },
-    errorMessages: {},
-    modalIsOpen: false,
+  const [formData, setFormData] = useState({
+    guestname: '',
+    tel: '',
+    startDate: null,
+    endDate: null,
+  });
+  const [errorMessages, setErrorMessages] = useState({});
+  const [modalState, setModalState] = useState({
+    isModalOpen: false,
     modalMessage: '',
-    bookingSuccess: false,
-    reserveIsLoading: false,
-  };
+  });
+  const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [reserveIsLoading, setReserveIsLoading] = useState(false);
 
-  setNameAndTel = e => {
-    this.setState({
-      formData: {
-        ...this.state.formData,
-        [e.target.name]: e.target.value,
-      },
+  const setNameAndTel = e => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
     });
   };
 
-  setStartDate = (startDate = this.state.formData.startDate) => {
+  const setStartDate = (startDate = formData.startDate) => {
     let endDate = '';
 
-    if (startDate > this.state.formData.endDate) {
+    if (startDate > formData.endDate) {
       endDate = addDays(startDate, 1);
     }
 
-    const formData = {
-      ...this.state.formData,
+    setFormData({
+      ...formData,
       startDate,
       endDate,
-    };
-
-    this.setState({ formData });
+    });
   };
 
-  setEndDate = (endDate = this.state.formData.endDate) => {
-    const formData = {
-      ...this.state.formData,
+  const setEndDate = (endDate = formData.endDate) => {
+    setFormData({
+      ...formData,
       endDate,
-    };
-
-    this.setState({ formData });
+    });
   };
 
-  excludeDates = () => {
-    const { bookingData } = this.props;
+  const updateStyleToBody = () => {
+    document.body.classList.toggle('modal-is-open');
+  };
+
+  const excludeDates = () => {
+    const { bookingData } = props;
 
     return bookingData.map(data => parseISO(data.date));
   };
 
-  validateForm = () => {
-    const { formData, errorMessages } = this.state;
+  const openModal = () => {
+    setModalState({ ...modalState, isModalOpen: true });
+    updateStyleToBody();
+  };
+
+  const closeModal = () => {
+    setModalState({ ...modalState, isModalOpen: false });
+    updateStyleToBody();
+  };
+
+  const handleClickOutside = e => {
+    const modal = modalRef.current;
+
+    if (modal && modal.contains(e.target)) {
+      return;
+    }
+
+    closeModal();
+  };
+
+  const validateForm = () => {
     const { guestname, tel, startDate, endDate } = formData;
     const newErrorMessages = { ...errorMessages };
     const regPattern = /^\d+$/;
 
     newErrorMessages.guestname = guestname ? '' : 'Name must be filled in';
 
-    newErrorMessages.tel = tel && regPattern.test(tel) ? '' : 'Phone number must be filled in';
+    newErrorMessages.tel =
+      tel && regPattern.test(tel) ? '' : 'Phone number must be filled in';
 
-    newErrorMessages.dates = startDate && endDate ? '' : 'Dates should be selected';
+    newErrorMessages.dates =
+      startDate && endDate ? '' : 'Dates should be selected';
 
-    this.setState({
-      errorMessages: newErrorMessages,
-    });
+    setErrorMessages(newErrorMessages);
 
-    for (const message of Object.values(newErrorMessages)) {
-      if (message.length > 0) {
-        return false;
-      }
+    if (Object.values(newErrorMessages).some(message => message !== '')) {
+      return false;
     }
 
     return true;
   };
 
-  formatDate = (startDate, endDate) => {
+  const formatDate = (startDate, endDate) => {
     return eachDayOfInterval({
       start: new Date(startDate),
       end: new Date(endDate),
     }).map(date => format(new Date(date), 'yyyy-MM-dd'));
   };
 
-  createFormData = () => {
-    const { formData } = this.state;
+  const createFormData = () => {
     const { guestname, tel, startDate, endDate } = formData;
-    const date = this.formatDate(startDate, endDate);
+    const date = formatDate(startDate, endDate);
 
     const data = {
       name: guestname,
@@ -114,193 +128,162 @@ export class BookingForm extends Component {
     return data;
   };
 
-  sendFormData = async () => {
-    const { roomID, refreshBookingData } = this.props;
-    const data = this.createFormData();
-    let modalMessage;
+  const clearFormInputs = () => {
+    setFormData({
+      guestname: '',
+      tel: '',
+      startDate: null,
+      endDate: null,
+    });
+  };
 
+  const sendFormData = async () => {
+    const { roomID, refreshBookingData } = props;
+    const data = createFormData();
     try {
-      this.setState({ reserveIsLoading: true });
+      setReserveIsLoading(true);
 
-      await apiPostBookingData(roomID, data);
+      // await apiPostBookingData(roomID, data);
 
-      modalMessage = 'Thank you for booking with White Space, your room was booked successfully!';
+      const modalMessage =
+        'Thank you for booking with White Space, your room was booked successfully!';
 
-      this.setState({
-        modalMessage,
-        bookingSuccess: true,
-        reserveIsLoading: false,
-      });
-      this.openModal();
-      this.clearFormInputs();
+      setModalState({ ...modalState, modalMessage });
+      setBookingSuccess(true);
+      setReserveIsLoading(false);
+      openModal();
+      clearFormInputs();
       refreshBookingData();
     } catch (e) {
       if (!e.response) return;
 
-      modalMessage = e.response.data.message;
+      const modalMessage = e.response.data.message;
 
-      this.setState({
-        modalMessage,
-        bookingSuccess: false,
-        reserveIsLoading: false,
-      });
-      this.openModal();
+      setModalState({ ...modalState, modalMessage });
+      setBookingSuccess(false);
+      setReserveIsLoading(false);
+      openModal();
 
-      console.error(`🚫 Something went wrong posting data: ${e.response.data.message}`);
+      console.error(
+        `🚫 Something went wrong posting data: ${e.response.data.message}`,
+      );
     }
   };
 
-  clearFormInputs = () => {
-    this.setState({
-      formData: {
-        guestname: '',
-        tel: '',
-        startDate: null,
-        endDate: null,
-      },
-    });
-  };
-
-  submitForm = e => {
+  const submitForm = e => {
     e.preventDefault();
 
-    const allValidated = this.validateForm();
+    const allValidated = validateForm();
 
     if (allValidated) {
-      this.sendFormData();
+      sendFormData();
     }
   };
 
-  updateStyleToBody = () => {
-    document.body.classList.toggle('modal-is-open');
-  };
+  // const {
+  //   formData,
+  //   errorMessages,
+  //   modalIsOpen,
+  //   modalMessage,
+  //   bookingSuccess,
+  //   reserveIsLoading,
+  // } = this.state;
+  const { guestname, tel, startDate, endDate } = formData;
+  const { normalDayPrice, holidayPrice } = props;
 
-  openModal = () => {
-    this.setState({ modalIsOpen: true }, this.updateStyleToBody);
-  };
-
-  closeModal = () => {
-    this.setState({ modalIsOpen: false }, this.updateStyleToBody);
-  };
-
-  handleClickOutside = e => {
-    const modal = this.modalRef.current;
-
-    if (modal && modal.contains(e.target)) {
-      return;
-    }
-
-    this.closeModal();
-  };
-
-  render() {
-    const {
-      formData,
-      errorMessages,
-      modalIsOpen,
-      modalMessage,
-      bookingSuccess,
-      reserveIsLoading,
-    } = this.state;
-    const { guestname, tel, startDate, endDate } = formData;
-    const { normalDayPrice, holidayPrice } = this.props;
-
-    return (
-      <>
-        <div className="booking-card__form">
-          <form className="form" ref={this.formRef} onSubmit={this.submitForm}>
-            <div className="form__field">
-              <label htmlFor="guestname" className="form__label">
-                Name
-              </label>
-              <input
-                type="text"
-                className="form__input"
-                name="guestname"
-                value={guestname}
-                onChange={this.setNameAndTel}
-              />
-              <em className="form__error-text">{errorMessages.guestname}</em>
-            </div>
-            <div className="form__field">
-              <label htmlFor="guestname" className="form__label">
-                Tel
-              </label>
-              <input
-                type="text"
-                className="form__input"
-                name="tel"
-                value={tel}
-                onChange={this.setNameAndTel}
-              />
-              <em className="form__error-text">{errorMessages.tel}</em>
-            </div>
-            <div className="form__field">
-              <label htmlFor="guestname" className="form__label">
-                Dates
-              </label>
-              <div className="form__dates-wrapper">
-                <DatePicker
-                  selected={startDate}
-                  selectsStart
-                  startDate={startDate}
-                  endDate={endDate}
-                  onChange={this.setStartDate}
-                  minDate={addDays(new Date(), 1)}
-                  maxDate={addDays(new Date(), 90)}
-                  excludeDates={this.excludeDates()}
-                  dateFormat="yyyy-MM-dd"
-                  placeholderText="Check in"
-                />
-                &#8594;
-                <DatePicker
-                  selected={endDate}
-                  selectsEnd
-                  startDate={startDate}
-                  endDate={endDate}
-                  onChange={this.setEndDate}
-                  minDate={addDays(startDate, 1)}
-                  maxDate={addDays(new Date(), 90)}
-                  excludeDates={this.excludeDates()}
-                  dateFormat="yyyy-MM-dd"
-                  placeholderText="Check out"
-                  popperModifiers={{
-                    preventOverflow: {
-                      enabled: true,
-                      escapeWithReference: false,
-                      boundariesElement: 'viewport',
-                    },
-                  }}
-                />
-              </div>
-              <em className="form__error-text">{errorMessages.dates}</em>
-            </div>
-            <TotalAmount
-              normalDayPrice={normalDayPrice}
-              holidayPrice={holidayPrice}
-              startDate={startDate}
-              endDate={endDate}
+  return (
+    <>
+      <div className="booking-card__form">
+        <form className="form" ref={formRef} onSubmit={submitForm}>
+          <div className="form__field">
+            <p htmlFor="guestname" className="form__label">
+              Họ Tên
+            </p>
+            <input
+              type="text"
+              className="form__input"
+              name="guestname"
+              value={guestname}
+              onChange={setNameAndTel}
             />
-            <div className="form__btn-wrapper">
-              <button type="submit" className="form__submit-btn">
-                {reserveIsLoading ? <Facebook color="#fff" /> : 'Reserve'}
-              </button>
+            <em className="form__error-text">{errorMessages.guestname}</em>
+          </div>
+          <div className="form__field">
+            <p htmlFor="tel" className="form__label">
+              Điện Thoại
+            </p>
+            <input
+              type="text"
+              className="form__input"
+              name="tel"
+              value={tel}
+              onChange={setNameAndTel}
+            />
+            <em className="form__error-text">{errorMessages.tel}</em>
+          </div>
+          <div className="form__field">
+            <p className="form__label">Ngày</p>
+            <div className="form__dates-wrapper">
+              <DatePicker
+                selected={startDate}
+                selectsStart
+                startDate={startDate}
+                endDate={endDate}
+                onChange={setStartDate}
+                minDate={addDays(new Date(), 1)}
+                maxDate={addDays(new Date(), 90)}
+                excludeDates={excludeDates()}
+                dateFormat="yyyy-MM-dd"
+                placeholderText="Check in"
+              />
+              &#8594;
+              <DatePicker
+                selected={endDate}
+                selectsEnd
+                startDate={startDate}
+                endDate={endDate}
+                onChange={setEndDate}
+                minDate={addDays(startDate, 1)}
+                maxDate={addDays(new Date(), 90)}
+                excludeDates={excludeDates()}
+                dateFormat="yyyy-MM-dd"
+                placeholderText="Check out"
+                popperModifiers={{
+                  preventOverflow: {
+                    enabled: true,
+                    escapeWithReference: false,
+                    boundariesElement: 'viewport',
+                  },
+                }}
+              />
             </div>
-          </form>
-        </div>
-        {modalIsOpen && (
-          <Modal
-            modalRef={this.modalRef}
-            modalIsOpen={modalIsOpen}
-            modalMessage={modalMessage}
-            closeModal={this.closeModal}
-            handleClickOutside={this.handleClickOutside}
-            bookingSuccess={bookingSuccess}
+            <em className="form__error-text">{errorMessages.dates}</em>
+          </div>
+          <TotalAmount
+            normalDayPrice={normalDayPrice}
+            holidayPrice={holidayPrice}
+            startDate={startDate}
+            endDate={endDate}
           />
-        )}
-      </>
-    );
-  }
-}
+          <div className="form__btn-wrapper">
+            <button type="submit" className="form__submit-btn">
+              {reserveIsLoading ? <Facebook color="#fff" /> : 'Đặt Phòng'}
+            </button>
+          </div>
+        </form>
+      </div>
+      {modalState.isModalOpen && (
+        <Modal
+          modalRef={modalRef}
+          modalIsOpen={modalState.isModalOpen}
+          modalMessage={modalState.modalMessage}
+          closeModal={closeModal}
+          handleClickOutside={handleClickOutside}
+          bookingSuccess={bookingSuccess}
+        />
+      )}
+    </>
+  );
+};
 
 export default BookingForm;

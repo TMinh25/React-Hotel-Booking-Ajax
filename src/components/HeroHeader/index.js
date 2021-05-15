@@ -47,16 +47,28 @@ class HeroHeader extends Component {
               />
               <div className="hero__info-content">
                 <div className="hero__info-left">
-                  <img
-                    src="/images/hero-instagram-brands.svg"
-                    alt="White space's instagram"
-                    className="hero__info-social-icon"
-                  />
-                  <img
-                    src="/images/hero-facebook-square-brands.svg"
-                    alt="White space's facebook"
-                    className="hero__info-social-icon"
-                  />
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="https://www.instagram.com/hnim.gnourt/"
+                  >
+                    <img
+                      src="/images/hero-instagram-brands.svg"
+                      alt="White space's instagram"
+                      className="hero__info-social-icon"
+                    />
+                  </a>
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="https://www.facebook.com/sipp.minhh/"
+                  >
+                    <img
+                      src="/images/hero-facebook-square-brands.svg"
+                      alt="White space's facebook"
+                      className="hero__info-social-icon"
+                    />
+                  </a>
                 </div>
                 <div className="hero__info-right">
                   <div className="hero__info-item">
@@ -65,7 +77,7 @@ class HeroHeader extends Component {
                       alt="tel"
                       className="hero__info-contact-icon"
                     />
-                    <span className="hero__info-text">+49 (0) 271/740-5120</span>
+                    <span className="hero__info-text">0338-658-656</span>
                   </div>
                   <div className="hero__info-item">
                     <img
@@ -73,7 +85,9 @@ class HeroHeader extends Component {
                       alt="email"
                       className="hero__info-contact-icon"
                     />
-                    <span className="hero__info-text">contact@whitespace.com</span>
+                    <span className="hero__info-text">
+                      minhsip2510@gmail.com
+                    </span>
                   </div>
                   <div className="hero__info-item">
                     <img
@@ -81,7 +95,7 @@ class HeroHeader extends Component {
                       alt="address"
                       className="hero__info-contact-icon"
                     />
-                    <span className="hero__info-text">Talblick 268, Siegen</span>
+                    <span className="hero__info-text">Hạ Long, Quảng Ninh</span>
                   </div>
                 </div>
               </div>
@@ -89,7 +103,11 @@ class HeroHeader extends Component {
           </div>
           <div className="hero__slides">
             {this.state.urls.map((img, i) => (
-              <div key={i} className="hero__slide" style={{ backgroundImage: `url(${img})` }} />
+              <div
+                key={i}
+                className="hero__slide"
+                style={{ backgroundImage: `url(${img})` }}
+              />
             ))}
           </div>
         </header>

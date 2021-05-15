@@ -1,5 +1,7 @@
 .room-card {
   box-shadow: 2px 2px 9px 0 rgba(0, 0, 0, 0.18);
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .room-card__wrapper {
@@ -22,14 +24,14 @@
   width: 100%;
   padding: rem(20) rem(24);
   background-color: $gray-light;
-  transform: translateY(40%);
+  transform: translateY(60%);
   transition: transform 0.3s;
 
   .room-card__link:hover & {
     transform: translateY(0);
   }
 
-  @include media("below-tablet") {
+  @include media('below-tablet') {
     padding: rem(16);
   }
 }
@@ -37,7 +39,7 @@
 .room-card__title {
   @extend %light--16;
 
-  margin-bottom: rem(30);
+  margin-bottom: rem(20);
   color: $black;
 }
 
@@ -46,7 +48,7 @@
   grid-template-columns: repeat(2, auto);
   justify-content: space-between;
   align-items: baseline;
-  gap: rem(10);
+  gap: rem(7);
 }
 
 .room-card__price-l {

@@ -1,10 +1,9 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
-import GithubCorner from 'react-github-corner';
-
 import MainPage from '../pages/MainPage/index';
 import DetailsPage from '../pages/DetailsPage/index';
+import AdminPage from '../pages/AdminPage/index';
 import ScrollToTop from './ScrollToTop';
 
 const Router = () => (
@@ -13,16 +12,11 @@ const Router = () => (
       <ScrollToTop>
         <Switch>
           <Route exact path="/" component={MainPage} />
-          <Route path="/room/:roomId" component={DetailsPage} />
+          <Route path="/room/:roomID" component={DetailsPage} />
+          <Route path="/admin" component={AdminPage} />
         </Switch>
       </ScrollToTop>
     </BrowserRouter>
-    <GithubCorner
-      style={{ position: 'fixed', top: 0, right: 0, zIndex: 1 }}
-      direction="right"
-      href="https://github.com/pamcy/React-Hotel-Booking-Ajax"
-      target="_blank"
-    />
   </>
 );
 
