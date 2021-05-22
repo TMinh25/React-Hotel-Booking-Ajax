@@ -8,6 +8,7 @@ The main purpose of this project is to implement Firebase and Redux with React. 
 
 ![Hotel Booking Site with React](https://res.cloudinary.com/pamcy/image/upload/v1570325673/coding/react-hotel-booking.png)
 _The hotel booking template designed and shared by [edith.hsu](https://z7x2c0v0b8.github.io/the_f2e_2nd/hotel_reservation.html)_
+
 _This repo was fork from [pamcy](https://github.com/pamcy/React-Hotel-Booking-Ajax)_
 
 ## What I learned from this project
