@@ -11,6 +11,7 @@
 .room-info__description,
 .room-info__check-title {
   @extend %light--16;
+  margin-top: 6px;
 }
 
 .room-info__checks {

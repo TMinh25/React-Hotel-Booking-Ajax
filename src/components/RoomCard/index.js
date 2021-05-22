@@ -8,7 +8,9 @@ const RoomCard = ({ path, data }) => {
       <div
         className="room-card__wrapper"
         style={{
-          backgroundImage: `url(${data.imageUrl}), linear-gradient(to right, #e4e4e4, #f8f8f8)`,
+          backgroundImage: `url(${
+            data?.imageUrl[0]
+          }), linear-gradient(to right, #e4e4e4, #f8f8f8)`,
         }}
       >
         <Link
@@ -27,8 +29,13 @@ const RoomCard = ({ path, data }) => {
                 {numberWithCommas(data.normalDayPrice)} VNĐ
               </span>
               <span className="room-card__price-s room-card__price-s--gray">
-                {data.holidayPrice &&
-                  'cuối tuần ' + numberWithCommas(data.holidayPrice) + ' VNĐ'}
+                {data.holidayPrice && (
+                  <>
+                    cuối tuần
+                    <br />
+                    {numberWithCommas(data.holidayPrice)} VNĐ
+                  </>
+                )}
               </span>
             </div>
           </div>

@@ -1,16 +1,8 @@
 import React from 'react';
-import { useTheme } from '@material-ui/core/styles';
-// import {
-//   LineChart,
-//   Line,
-//   XAxis,
-//   YAxis,
-//   Label,
-//   ResponsiveContainer,
-// } from 'recharts';
 import Title from './Title';
-
-import { Line } from 'react-chartjs-2';
+import { Paper } from '@material-ui/core';
+import { Bar } from 'react-chartjs-2';
+import { useSelector } from 'react-redux';
 
 // Generate Sales Data
 function createData(time, amount) {
@@ -18,71 +10,71 @@ function createData(time, amount) {
 }
 
 export default function Chart() {
-  const theme = useTheme();
-
+  const chartData = useSelector(state => state.statistic.chartData);
+  const randIncome = () => Math.round(Math.random() * 30000000);
+  const randGuest = () => Math.round(Math.random() * 999);
   const data = {
-    labels: ['1', '2', '3', '4', '5', '6'],
+    labels: chartData.map(item => item.label),
     datasets: [
       {
-        label: 'Lượt Khách Thuê Phòng',
-        data: [12, 19, 3, 5, 2, 3],
-        fill: false,
-        backgroundColor: 'rgb(255, 99, 132)',
-        borderColor: 'rgba(255, 99, 132, 0.2)',
-        tension: 0.2,
+        type: 'bar',
+        label: 'Thu Nhập Tháng',
+        yAxisID: 'y',
+        stepped: 'middle',
+        data: chartData.map(item => item.data.income),
+      },
+      {
+        type: 'line',
+        label: 'Số Lượng Khách',
+        borderColor: 'rgb(54, 162, 235)',
+        borderWidth: 2,
+        yAxisID: 'y1',
+        stepped: 'middle',
+        data: chartData.map(item => item.data.guest),
       },
     ],
   };
-
   const options = {
-    scales: {
-      yAxes: [
-        {
-          ticks: {
-            beginAtZero: true,
-          },
-        },
-      ],
+    responsive: true,
+    interaction: {
+      mode: 'index',
+      intersect: false,
     },
-    plugins: {
-      legend: {
-        display: false,
+    scales: {
+      y: {
+        type: 'linear',
+        display: true,
+        title: {
+          display: true,
+          text: 'Thu Nhập',
+        },
+        position: 'left',
+      },
+      y1: {
+        type: 'linear',
+        display: true,
+        ticks: {
+          stepSize: 2,
+        },
+        title: {
+          display: true,
+          text: 'Số Lượng Khách',
+        },
+        position: 'right',
+
+        // grid line settings
+        grid: {
+          drawOnChartArea: false, // only want the grid lines for one axis to show up
+        },
       },
     },
   };
   return (
-    <React.Fragment>
-      <Title>Tháng {new Date().getMonth() + 1}</Title>
-      {/* <ResponsiveContainer> */}
-      <Line data={data} options={options} />
-
-      {/* <LineChart
-          data={data}
-          margin={{
-            top: 16,
-            right: 16,
-            bottom: 0,
-            left: 24,
-          }}
-        >
-          <XAxis dataKey="time" stroke={theme.palette.text.secondary} />
-          <YAxis stroke={theme.palette.text.secondary}>
-            <Label
-              angle={270}
-              position="left"
-              style={{ textAnchor: 'middle', fill: theme.palette.text.primary }}
-            >
-              Sales ($)
-            </Label>
-          </YAxis>
-          <Line
-            type="monotone"
-            dataKey="amount"
-            stroke={theme.palette.primary.main}
-            dot={false}
-          />
-        </LineChart> */}
-      {/* </ResponsiveContainer> */}
-    </React.Fragment>
+    <>
+      <Paper style={{ padding: 20 }}>
+        <Title>Tháng {new Date().getMonth() + 1}</Title>
+        <Bar data={data} options={options} />
+      </Paper>
+    </>
   );
 }

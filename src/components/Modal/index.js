@@ -1,9 +1,9 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-import LineBreak from "../LineBreak/index";
+import LineBreak from '../LineBreak/index';
 
-const Modal = (props) => {
+const Modal = props => {
   const {
     modalRef,
     modalIsOpen,
@@ -13,8 +13,8 @@ const Modal = (props) => {
     bookingSuccess,
   } = props;
 
-  const heading = bookingSuccess ? "Welcome to White Space" : "OOPS!";
-  const icon = bookingSuccess ? "success" : "error";
+  const heading = bookingSuccess ? 'Chào Mừng Quý Khách' : 'OOPS!';
+  const icon = bookingSuccess ? 'success' : 'error';
 
   return modalIsOpen ? (
     ReactDOM.createPortal(
@@ -30,7 +30,6 @@ const Modal = (props) => {
                 ×
               </button>
               <h2 className="modal__header-title">{heading}</h2>
-              <LineBreak location="inner-modal" />
             </div>
             <div className="modal__body">
               <p className="modal__text">{modalMessage}</p>
@@ -43,7 +42,7 @@ const Modal = (props) => {
           </div>
         </div>
       </div>,
-      document.body
+      document.body,
     )
   ) : (
     <React.Fragment></React.Fragment>

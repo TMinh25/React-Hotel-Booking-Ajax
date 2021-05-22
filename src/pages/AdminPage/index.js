@@ -1,14 +1,20 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Dashboard from './Dashboard/Dashboard';
 import { useSelector } from 'react-redux';
 import Login from './Login';
 import Router from './Router';
+import Loading from '../../components/Loading';
 
 function ProtectedRoutes() {
+  const loading = useSelector(state => state.loading);
+
   return (
-    <Dashboard>
-      <Router />
-    </Dashboard>
+    <>
+      <Dashboard>
+        <Router />
+      </Dashboard>
+      {loading && <Loading />}
+    </>
   );
 }
 
@@ -24,15 +30,19 @@ const AdminPage = () => {
     applyTheme(lightTheme);
   }, []);
 
-  const user = useSelector(state => state.user);
-  console.log(user);
+  const auth = useSelector(state => state.firebase.auth);
 
-  return <>{user != null && user.email ? <ProtectedRoutes /> : <Login />}</>;
+  // console.log(user?.displayName);
+  // console.log(user);
+
+  if (!auth.isLoaded) return <Loading />;
+
+  return <>{auth.isEmpty ? <Login /> : <ProtectedRoutes />}</>;
 };
 
 export default AdminPage;
 
-export const lightTheme = {
+const lightTheme = {
   '--bg': '#fff',
   '--primaryColor': '#37352f',
   '--secondaryColor': '#19171199',

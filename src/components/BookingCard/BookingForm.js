@@ -1,25 +1,27 @@
-import React, { useState } from 'react';
+import React, { createRef, useState } from 'react';
 
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { addDays, eachDayOfInterval, format, parseISO } from 'date-fns';
+import { addDays } from 'date-fns';
 import { Facebook } from 'react-spinners-css';
-import PropTypes from 'prop-types';
 
 import TotalAmount from './TotalAmount';
 import Modal from '../Modal/index';
+import { addBooking } from '../../reducers/bookings';
+import { useDispatch } from 'react-redux';
 
 export const BookingForm = props => {
-  const formRef = React.createRef();
+  const {
+    bookingData,
+    setBookingData,
+    clearBookingData,
+    setTotalPriceInBooking,
+  } = props;
+  const formRef = createRef();
+  const modalRef = createRef();
 
-  const modalRef = React.createRef();
+  const dispatch = useDispatch();
 
-  const [formData, setFormData] = useState({
-    guestname: '',
-    tel: '',
-    startDate: null,
-    endDate: null,
-  });
   const [errorMessages, setErrorMessages] = useState({});
   const [modalState, setModalState] = useState({
     isModalOpen: false,
@@ -28,31 +30,27 @@ export const BookingForm = props => {
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [reserveIsLoading, setReserveIsLoading] = useState(false);
 
-  const setNameAndTel = e => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const setNameTelAndGuestCount = e =>
+    setBookingData({ ...bookingData, [e.target.name]: e.target.value });
 
-  const setStartDate = (startDate = formData.startDate) => {
+  const setStartDate = (startDate = bookingData.reserveDateStart) => {
     let endDate = '';
 
-    if (startDate > formData.endDate) {
+    if (startDate >= bookingData.reserveDateEnd) {
       endDate = addDays(startDate, 1);
     }
 
-    setFormData({
-      ...formData,
-      startDate,
-      endDate,
+    setBookingData({
+      ...bookingData,
+      reserveDateStart: +new Date(startDate),
+      reserveDateEnd: +new Date(endDate),
     });
   };
 
-  const setEndDate = (endDate = formData.endDate) => {
-    setFormData({
-      ...formData,
-      endDate,
+  const setEndDate = (endDate = bookingData.reserveDateEnd) => {
+    setBookingData({
+      ...bookingData,
+      reserveDateEnd: +new Date(endDate),
     });
   };
 
@@ -60,14 +58,10 @@ export const BookingForm = props => {
     document.body.classList.toggle('modal-is-open');
   };
 
-  const excludeDates = () => {
-    const { bookingData } = props;
-
-    return bookingData.map(data => parseISO(data.date));
-  };
-
   const openModal = () => {
-    setModalState({ ...modalState, isModalOpen: true });
+    const modalMessage =
+      'Cảm ơn bạn đã tương tác với White Space, sẽ có nhận viên gọi điện xác nhận cho bạn!';
+    setModalState({ ...modalState, modalMessage, isModalOpen: true });
     updateStyleToBody();
   };
 
@@ -87,17 +81,19 @@ export const BookingForm = props => {
   };
 
   const validateForm = () => {
-    const { guestname, tel, startDate, endDate } = formData;
+    const { guestName, tel, reserveDateStart, reserveDateEnd } = bookingData;
     const newErrorMessages = { ...errorMessages };
     const regPattern = /^\d+$/;
 
-    newErrorMessages.guestname = guestname ? '' : 'Name must be filled in';
+    newErrorMessages.guestName = guestName ? '' : 'Bắt buộc phải điền tên';
 
     newErrorMessages.tel =
-      tel && regPattern.test(tel) ? '' : 'Phone number must be filled in';
+      tel && regPattern.test(tel) ? '' : 'Số điện thoại là thông tin bắt buộc';
 
     newErrorMessages.dates =
-      startDate && endDate ? '' : 'Dates should be selected';
+      reserveDateStart && reserveDateEnd
+        ? ''
+        : 'Hãy chọn ngày đến và đi của bạn';
 
     setErrorMessages(newErrorMessages);
 
@@ -108,52 +104,15 @@ export const BookingForm = props => {
     return true;
   };
 
-  const formatDate = (startDate, endDate) => {
-    return eachDayOfInterval({
-      start: new Date(startDate),
-      end: new Date(endDate),
-    }).map(date => format(new Date(date), 'yyyy-MM-dd'));
-  };
-
-  const createFormData = () => {
-    const { guestname, tel, startDate, endDate } = formData;
-    const date = formatDate(startDate, endDate);
-
-    const data = {
-      name: guestname,
-      tel,
-      date,
-    };
-
-    return data;
-  };
-
-  const clearFormInputs = () => {
-    setFormData({
-      guestname: '',
-      tel: '',
-      startDate: null,
-      endDate: null,
-    });
-  };
-
   const sendFormData = async () => {
-    const { roomID, refreshBookingData } = props;
-    const data = createFormData();
     try {
       setReserveIsLoading(true);
-
-      // await apiPostBookingData(roomID, data);
-
-      const modalMessage =
-        'Thank you for booking with White Space, your room was booked successfully!';
-
-      setModalState({ ...modalState, modalMessage });
+      // add current timestamp to bookingData
+      await dispatch(addBooking({ ...bookingData, timestamp: +new Date() }));
       setBookingSuccess(true);
       setReserveIsLoading(false);
+      clearBookingData();
       openModal();
-      clearFormInputs();
-      refreshBookingData();
     } catch (e) {
       if (!e.response) return;
 
@@ -179,16 +138,13 @@ export const BookingForm = props => {
       sendFormData();
     }
   };
-
-  // const {
-  //   formData,
-  //   errorMessages,
-  //   modalIsOpen,
-  //   modalMessage,
-  //   bookingSuccess,
-  //   reserveIsLoading,
-  // } = this.state;
-  const { guestname, tel, startDate, endDate } = formData;
+  const {
+    guestName,
+    tel,
+    reserveDateStart,
+    reserveDateEnd,
+    guestCount,
+  } = bookingData;
   const { normalDayPrice, holidayPrice } = props;
 
   return (
@@ -196,17 +152,17 @@ export const BookingForm = props => {
       <div className="booking-card__form">
         <form className="form" ref={formRef} onSubmit={submitForm}>
           <div className="form__field">
-            <p htmlFor="guestname" className="form__label">
+            <p htmlFor="guestName" className="form__label">
               Họ Tên
             </p>
             <input
               type="text"
               className="form__input"
-              name="guestname"
-              value={guestname}
-              onChange={setNameAndTel}
+              name="guestName"
+              value={guestName}
+              onChange={setNameTelAndGuestCount}
             />
-            <em className="form__error-text">{errorMessages.guestname}</em>
+            <em className="form__error-text">{errorMessages.guestName}</em>
           </div>
           <div className="form__field">
             <p htmlFor="tel" className="form__label">
@@ -217,7 +173,20 @@ export const BookingForm = props => {
               className="form__input"
               name="tel"
               value={tel}
-              onChange={setNameAndTel}
+              onChange={setNameTelAndGuestCount}
+            />
+            <em className="form__error-text">{errorMessages.tel}</em>
+          </div>
+          <div className="form__field">
+            <p htmlFor="tel" className="form__label">
+              Số Lượng Khách
+            </p>
+            <input
+              type="number"
+              className="form__input"
+              name="guestCount"
+              value={guestCount}
+              onChange={setNameTelAndGuestCount}
             />
             <em className="form__error-text">{errorMessages.tel}</em>
           </div>
@@ -225,28 +194,26 @@ export const BookingForm = props => {
             <p className="form__label">Ngày</p>
             <div className="form__dates-wrapper">
               <DatePicker
-                selected={startDate}
+                selected={reserveDateStart}
                 selectsStart
-                startDate={startDate}
-                endDate={endDate}
+                startDate={reserveDateStart}
+                endDate={reserveDateEnd}
                 onChange={setStartDate}
                 minDate={addDays(new Date(), 1)}
                 maxDate={addDays(new Date(), 90)}
-                excludeDates={excludeDates()}
-                dateFormat="yyyy-MM-dd"
+                dateFormat="dd-MM-yyyy"
                 placeholderText="Check in"
               />
               &#8594;
               <DatePicker
-                selected={endDate}
+                selected={reserveDateEnd}
                 selectsEnd
-                startDate={startDate}
-                endDate={endDate}
+                startDate={reserveDateStart}
+                endDate={reserveDateEnd}
                 onChange={setEndDate}
-                minDate={addDays(startDate, 1)}
+                minDate={addDays(reserveDateStart, 1)}
                 maxDate={addDays(new Date(), 90)}
-                excludeDates={excludeDates()}
-                dateFormat="yyyy-MM-dd"
+                dateFormat="dd-MM-yyyy"
                 placeholderText="Check out"
                 popperModifiers={{
                   preventOverflow: {
@@ -259,12 +226,15 @@ export const BookingForm = props => {
             </div>
             <em className="form__error-text">{errorMessages.dates}</em>
           </div>
-          <TotalAmount
-            normalDayPrice={normalDayPrice}
-            holidayPrice={holidayPrice}
-            startDate={startDate}
-            endDate={endDate}
-          />
+          {bookingData && (
+            <TotalAmount
+              normalDayPrice={normalDayPrice}
+              holidayPrice={holidayPrice}
+              startDate={reserveDateStart}
+              endDate={reserveDateEnd}
+              setTotalPriceInBooking={setTotalPriceInBooking}
+            />
+          )}
           <div className="form__btn-wrapper">
             <button type="submit" className="form__submit-btn">
               {reserveIsLoading ? <Facebook color="#fff" /> : 'Đặt Phòng'}

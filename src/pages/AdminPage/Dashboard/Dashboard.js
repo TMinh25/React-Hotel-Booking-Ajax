@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -16,6 +16,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import {
   Avatar,
   ClickAwayListener,
+  Collapse,
   Grow,
   MenuItem,
   MenuList,
@@ -32,94 +33,21 @@ import SettingIcon from '@material-ui/icons/Settings';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import PeopleIcon from '@material-ui/icons/People';
 import { useHistory, useRouteMatch } from 'react-router';
+import {
+  Assessment,
+  ExpandLess,
+  ExpandMore,
+  StarBorder,
+} from '@material-ui/icons';
+import useStyles from '../../../hooks/useStyles';
 
-const drawerWidth = 240;
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-  },
-  toolbar: {
-    paddingRight: 24, // keep right padding when drawer closed
-  },
-  toolbarIcon: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '0 8px',
-    ...theme.mixins.toolbar,
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  menuButton: {
-    marginRight: 36,
-  },
-  menuButtonHidden: {
-    display: 'none',
-  },
-  title: {
-    flexGrow: 1,
-  },
-  drawerPaper: {
-    position: 'relative',
-    whiteSpace: 'nowrap',
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  drawerPaperClose: {
-    overflowX: 'hidden',
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    width: theme.spacing(7),
-    [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(7),
-    },
-  },
-  appBarSpacer: theme.mixins.toolbar,
-  content: {
-    flexGrow: 1,
-    height: '100vh',
-    overflow: 'auto',
-  },
-  container: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
-  },
-  paper: {
-    padding: theme.spacing(2),
-    display: 'flex',
-    overflow: 'auto',
-    flexDirection: 'column',
-  },
-  fixedHeight: {
-    height: 240,
-  },
-}));
-
-export default function Dashboard(props) {
+export default function NavAndDrawer(props) {
   const classes = useStyles();
   let { path, url } = useRouteMatch();
   const history = useHistory();
 
-  const [openDrawer, setOpenDrawer] = React.useState(true);
+  const [openDrawer, setOpenDrawer] = useState(true);
+  const [openReserveList, setOpenReserveList] = useState(false);
 
   const handleDrawerOpen = () => {
     setOpenDrawer(true);
@@ -127,9 +55,10 @@ export default function Dashboard(props) {
 
   const handleDrawerClose = () => {
     setOpenDrawer(false);
+    setOpenReserveList(false);
   };
 
-  const user = useSelector(state => state.user);
+  const user = useSelector(state => state.firebase.auth);
 
   const [openContext, setOpenContext] = React.useState(false);
 
@@ -153,6 +82,10 @@ export default function Dashboard(props) {
     });
   };
 
+  const onClickReservation = () => {
+    setOpenReserveList(!openReserveList);
+  };
+
   const MainListItems = () => (
     <div>
       <ListItem button onClick={() => history.push(`${url}`)}>
@@ -161,11 +94,53 @@ export default function Dashboard(props) {
         </ListItemIcon>
         <ListItemText primary="Trang Chủ" />
       </ListItem>
-      <ListItem button onClick={() => history.push(`${url}/reserve`)}>
+
+      <ListItem button onClick={onClickReservation}>
         <ListItemIcon>
           <ShoppingCartIcon />
         </ListItemIcon>
-        <ListItemText primary="Đặt Phòng" />
+        <ListItemText primary="Khách" />
+        {openReserveList ? <ExpandLess /> : <ExpandMore />}
+      </ListItem>
+      <Collapse in={openReserveList} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding>
+          <ListItem
+            onClick={() => history.push(`${url}/reserve`)}
+            button
+            className={classes.nested}
+          >
+            <ListItemIcon>
+              <StarBorder />
+            </ListItemIcon>
+            <ListItemText primary="Đặt Phòng" />
+          </ListItem>
+          <ListItem
+            onClick={() => history.push(`${url}/checkInAndOut`)}
+            button
+            className={classes.nested}
+          >
+            <ListItemIcon>
+              <StarBorder />
+            </ListItemIcon>
+            <ListItemText primary="CheckIn CheckOut" />
+          </ListItem>
+          <ListItem
+            onClick={() => history.push(`${url}/allBooking`)}
+            button
+            className={classes.nested}
+          >
+            <ListItemIcon>
+              <StarBorder />
+            </ListItemIcon>
+            <ListItemText primary="Dữ Liệu" />
+          </ListItem>
+        </List>
+      </Collapse>
+      <ListItem button onClick={() => history.push(`${url}/statistic`)}>
+        <ListItemIcon>
+          <Assessment />
+        </ListItemIcon>
+        <ListItemText primary="Thống Kê" />
       </ListItem>
       <ListItem button onClick={() => history.push(`${url}/manage-rooms`)}>
         <ListItemIcon>
@@ -173,12 +148,12 @@ export default function Dashboard(props) {
         </ListItemIcon>
         <ListItemText primary="Quản Lý Phòng Nghỉ" />
       </ListItem>
-      <ListItem button onClick={() => history.push(`${url}/manage-staffs`)}>
+      {/* <ListItem button onClick={() => history.push(`${url}/manage-staffs`)}>
         <ListItemIcon>
           <PeopleIcon />
         </ListItemIcon>
         <ListItemText primary="Quản Lý Nhân Viên" />
-      </ListItem>
+      </ListItem> */}
     </div>
   );
 
@@ -218,7 +193,7 @@ export default function Dashboard(props) {
             onClick={handleToggleContext}
             color="inherit"
           >
-            <Avatar src={user.photoURL} />
+            <Avatar src={user?.photoURL} />
           </IconButton>
           <Popper
             open={openContext}

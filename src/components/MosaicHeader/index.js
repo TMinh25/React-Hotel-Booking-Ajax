@@ -10,7 +10,7 @@ const MosaicHeader = props => {
   const [imageIndex, setImageIndex] = useState(0);
   const [lightBoxIsOpen, setLightBoxIsOpen] = useState(false);
   const [imageIsLoaded, setImageIsLoaded] = useState(
-    images.map(image => false),
+    images?.map(image => false),
   );
 
   const toggleLightbox = imageIndex => {
@@ -45,19 +45,21 @@ const MosaicHeader = props => {
           </Link>
         </div>
         <div className="mosaic-header__items">
-          {images.map((image, index) => (
+          {images?.slice(0, 3).map((image, index) => (
             <div
               key={index}
               className={`mosaic-header__item mosaic-header__item--${index +
                 1}`}
               onClick={() => toggleLightbox(index)}
             >
-              <img
-                src={image}
-                alt={name}
-                className="mosaic-header__img"
-                onLoad={() => handleImageLoaded(index)}
-              />
+              {image && (
+                <img
+                  src={image}
+                  alt={name}
+                  className="mosaic-header__img"
+                  onLoad={() => handleImageLoaded(index)}
+                />
+              )}
               {!imageIsLoaded[index] && (
                 <div className="mosaic-header__placeholder" />
               )}

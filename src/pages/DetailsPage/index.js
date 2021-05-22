@@ -7,83 +7,106 @@ import MosaicHeader from '../../components/MosaicHeader/index';
 import RoomInfo from '../../components/RoomInfo/index';
 import RoomAmenities from '../../components/RoomAmenities/index';
 import BookingCard from '../../components/BookingCard/index';
-import { getSingleRoom } from '../../firebase';
 import { useParams } from 'react-router';
+import { defaultFailCB, statusCode } from '../../utils';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchAllRooms,
+  getSingleRoom,
+  setCurrentRoom,
+} from '../../reducers/rooms';
+import { SplashScreen } from '../MainPage';
 
 const DetailsPage = props => {
-  const [currentRoom, setCurrentRoom] = useState([]);
-  const [bookingData, setBookingData] = useState([]);
+  // const [currentRoom, setCurrentRoom] = useState({});
+  const { roomID } = useParams();
+  const dispatch = useDispatch();
+  const currentRoom = useSelector(state => state.rooms?.currentRoom);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const initialState = {
+    guestName: '',
+    guestCount: null,
+    reserveDateStart: null,
+    reserveDateEnd: null,
+    room: { id: roomID, name: currentRoom?.name },
+    status: statusCode.reserveConfirmation,
+    timestamp: null,
+    tel: '',
+    totalPrice,
+  };
+
+  const [bookingData, setBookingData] = useState(initialState);
+
+  useEffect(() => {
+    console.log('currentRoom', currentRoom);
+    setBookingData(prevState => ({
+      ...prevState,
+      room: { id: roomID, name: currentRoom?.name },
+    }));
+  }, [currentRoom]);
+
+  const clearBookingData = () => setBookingData(initialState);
+
   const [roomIsLoading, setRoomIsLoading] = useState(true);
 
-  const { roomID } = useParams();
+  function setTotalPriceInBooking(val) {
+    setTotalPrice(val);
+    setBookingData({ ...bookingData, totalPrice: val });
+  }
+
+  // useEffect(() => {
+  //   console.log(bookingData);
+  // }, [bookingData]);
+
+  const getCurrentRoomData = () => {
+    try {
+      if (roomID) {
+        dispatch(getSingleRoom(roomID));
+        setBookingData({
+          ...bookingData,
+          room: { ...bookingData.room, name: currentRoom?.name },
+        });
+      }
+    } catch (e) {
+      console.error(
+        `🚫 Something went wrong fetching API calls on this room: ${e}`,
+      );
+    } finally {
+      setRoomIsLoading(false);
+    }
+    // eslint-disable-next-line
+  };
 
   useEffect(() => {
     getCurrentRoomData();
-    console.log(roomID);
-    // eslint-disable-next-line
   }, []);
-
-  const getCurrentRoomData = useCallback(async () => {
-    try {
-      // console.log(location.state.roomID);
-      const currentRoomResponse = await getSingleRoom(roomID);
-      console.log(currentRoomResponse);
-      setCurrentRoom(currentRoomResponse);
-    } catch (e) {
-      console.error(
-        `🚫 Something went wrong fetching API calls on this room: ${e}`,
-      );
-    }
-
-    setRoomIsLoading(false);
-
-    // eslint-disable-next-line
-  }, []);
-
-  const refreshBookingData = async () => {
-    // const { location } = this.props;
-
-    try {
-      // const response = await apiGetSingleRoom(location.state.roomID);
-      // this.setState({
-      //   bookingData: response.data.booking,
-      // });
-    } catch (e) {
-      console.error(
-        `🚫 Something went wrong fetching API calls on this room: ${e}`,
-      );
-    }
-  };
-
-  const {
-    name,
-    imageUrl,
-    amenities,
-    normalDayPrice,
-    holidayPrice,
-  } = currentRoom;
 
   return (
     <div className="container wrapper-l">
-      {roomIsLoading ? (
+      {!currentRoom ? (
         <MosaicSkeleton />
       ) : (
-        <MosaicHeader name={name} images={imageUrl} />
+        <MosaicHeader name={currentRoom?.name} images={currentRoom?.imageUrl} />
       )}
       <main className="main">
         <div className="wrapper-m main__wrapper">
           <section className="main__left">
             {roomIsLoading ? <InfoSkeleton /> : <RoomInfo data={currentRoom} />}
-            <RoomAmenities amenities={amenities} />
+            <RoomAmenities amenities={currentRoom?.amenities} />
           </section>
           <section className="main__right">
             <BookingCard
-              roomIsLoading={roomIsLoading}
-              normalDayPrice={normalDayPrice}
-              holidayPrice={holidayPrice}
-              roomID={roomID}
-              bookingData={bookingData}
-              refreshBookingData={refreshBookingData}
+              {...{
+                roomIsLoading,
+                normalDayPrice: currentRoom?.normalDayPrice,
+                holidayPrice: currentRoom?.holidayPrice,
+                roomID,
+                bookingData,
+                setBookingData,
+                clearBookingData,
+                setTotalPriceInBooking,
+                // refreshBookingData,
+              }}
             />
           </section>
         </div>

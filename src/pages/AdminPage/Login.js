@@ -1,12 +1,12 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { auth, database } from '../../firebase';
+import { useFirebase } from 'react-redux-firebase';
+import { auth } from '../../firebase';
 import useInput from '../../hooks/useInput';
-import { loginUser } from '../../reducers/user';
+
 import './index.scss';
 
 const Login = ({ signup }) => {
-  const dispatch = useDispatch();
   const email = useInput('');
   const password = useInput('');
 
@@ -14,28 +14,7 @@ const Login = ({ signup }) => {
     e.preventDefault();
 
     if (email.value.trim() && password.value.trim()) {
-      auth
-        .signInWithEmailAndPassword(email.value, password.value)
-        .then(async data => {
-          const userData = data.user.providerData[0];
-          const { ...rest } = userData;
-          const user = { ...rest };
-          console.log({ ...rest });
-          console.log(user);
-          localStorage.setItem('user', JSON.stringify(user));
-          // var curruser = auth.currentUser;
-
-          // curruser
-          //   .updateProfile({
-          //     displayName: 'Nguyễn Trường Minh',
-          //     photoURL:
-          //       'https://firebasestorage.googleapis.com/v0/b/min-bnb.appspot.com/o/profilePic.jpg?alt=media&token=463b13db-c022-4005-907d-9b8f15f87cc1',
-          //   })
-          //   .then(function() {
-          //     // Update successful.
-          //   });
-          dispatch(loginUser(user));
-        });
+      auth.signInWithEmailAndPassword(email.value, password.value);
     }
   };
 

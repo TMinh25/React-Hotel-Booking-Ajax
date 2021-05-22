@@ -6,7 +6,9 @@ import LineBreak from '../../components/LineBreak';
 import ManagePrice from './Manage/ManagePrice';
 import { PausePresentation, Delete, Create } from '@material-ui/icons';
 import {
+  Backdrop,
   Button,
+  CircularProgress,
   Divider,
   makeStyles,
   Paper,
@@ -16,9 +18,20 @@ import {
   TableHead,
   TableRow,
 } from '@material-ui/core';
-import { getAllRooms, getSingleRoom } from '../../firebase';
 import Title from './Dashboard/Title';
 import DropzonePreview from './Components/DropzonePreview';
+import { defaultFailCB, defaultSuccessCB } from '../../utils';
+import { useDispatch, useSelector } from 'react-redux';
+import { offLoading, onLoading } from '../../reducers/loading';
+import {
+  addRoom,
+  fetchAllRooms,
+  getSingleRoom as getCurrentRoom,
+  removeRoom,
+  setCurrentRoom,
+  updateRoomInfo,
+} from '../../reducers/rooms';
+import { useFirebase } from 'react-redux-firebase';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -29,10 +42,17 @@ const useStyles = makeStyles(theme => ({
   button: {
     margin: theme.spacing(1),
   },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
+  },
 }));
 
 const ManageRoom = () => {
-  const [values, setValues] = useState({
+  const firebase = useFirebase();
+  const rooms = useSelector(state => state.rooms);
+  const dispatch = useDispatch();
+  const initialValue = {
     amenities: {
       wifi: false,
       breakfast: false,
@@ -51,52 +71,61 @@ const ManageRoom = () => {
     },
     descriptionShort: {
       bed: [],
-      footage: 0,
-      guestMax: 0,
-      guestMin: 0,
-      privateBath: 0,
+      footage: null,
+      guestMax: null,
+      guestMin: null,
+      privateBath: null,
     },
     name: '',
     description: '',
-    normalDayPrice: 0,
-    holidayPrice: 0,
+    normalDayPrice: null,
+    holidayPrice: null,
     imageUrl: [],
-  });
+  };
+  const [values, setValues] = useState(initialValue);
+
   const [imageFiles, setImageFiles] = useState(values.imageUrl);
+  const [previewFiles, setPreviewFiles] = useState([]);
 
   const [currentRoomID, setCurrentRoomID] = useState('');
-  const [allRooms, setAllRooms] = useState({});
 
-  async function fetchRoomInfo() {
-    const res = await getSingleRoom(currentRoomID);
-    console.log(res.imageUrl);
-    setImageFiles(res.imageUrl);
-    setValues(res);
+  function fetchRoomInfo() {
+    if (rooms === null) {
+      dispatch(fetchAllRooms());
+      if (currentRoomID) dispatch(getCurrentRoom(currentRoomID));
+    }
+    setImageFiles(rooms[currentRoomID].imageUrl);
+    setValues(rooms[currentRoomID]);
+    dispatch(offLoading());
   }
 
-  async function fetchAllRoom() {
-    const res = await getAllRooms();
-    // console.log(res);
-    setAllRooms(res);
+  function fetchAllRoom() {
+    dispatch(fetchAllRooms());
+    !currentRoomID && dispatch(offLoading());
   }
-
-  useEffect(() => {
-    fetchAllRoom();
-  }, []);
 
   useEffect(() => {
     if (currentRoomID === '') {
+      dispatch(setCurrentRoom(null));
+      setValues(initialValue);
+      setImageFiles([]);
+      setPreviewFiles([]);
     } else {
+      dispatch(onLoading());
       fetchRoomInfo();
     }
+    // eslint-disable-next-line
   }, [currentRoomID]);
+
+  // useEffect(() => {
+  //   loading && fetchAllRoom();
+  // }, [loading]);
 
   const {
     amenities,
     checkInAndOut,
     descriptionShort,
     description,
-    imageUrl,
     normalDayPrice,
     holidayPrice,
     name,
@@ -136,27 +165,48 @@ const ManageRoom = () => {
     });
   };
 
-  useEffect(() => {
-    console.log(values);
-  }, [values]);
+  const handleCreateRoom = () => {
+    var images = imageFiles;
+    if (previewFiles.length !== 0) {
+      images = previewFiles.map(file => file.image);
+    }
+    dispatch(addRoom(values, images));
+  };
+
+  const handleUpdateRoom = () => {
+    var images = imageFiles;
+    if (previewFiles.length !== 0) {
+      images = previewFiles.map(file => file.image);
+    }
+    dispatch(updateRoomInfo(currentRoomID, values, images));
+  };
+
+  const handleDeleteRoom = () => {
+    dispatch(removeRoom(currentRoomID));
+  };
+
+  // useEffect(() => {
+  //   console.log(values);
+  // }, [values]);
 
   const classes = useStyles();
 
   return (
     <>
       <div className="container wrapper-l">
-        {/* {roomIsLoading ? (
-          <MosaicSkeleton />
-        ) : (
-          <MosaicHeader name={name} images={imageUrl} />
-        )} */}
         <main className="main">
           <div className="wrapper-m main__wrapper">
             <section className="main__left">
               <Paper className={classes.paper}>
                 <Title>Thông Tin Phòng</Title>
                 <DropzonePreview
-                  {...{ imageFiles, setImageFiles, currentRoomID }}
+                  {...{
+                    imageFiles,
+                    setImageFiles,
+                    previewFiles,
+                    setPreviewFiles,
+                    currentRoomID,
+                  }}
                 />
                 <ManageRoomInfo
                   {...{
@@ -170,10 +220,9 @@ const ManageRoom = () => {
                     setBed,
                   }}
                 />
-                <h2>Tiện Nghi</h2>
                 <ManageRoomAmenities {...{ amenities, setAmenities }} />
                 <Divider className="divider" />
-                <h2>Giá Cả</h2>
+                <span className="room-info__check-title">Giá Cả</span>
                 <ManagePrice
                   {...{
                     normalDayPrice,
@@ -181,24 +230,18 @@ const ManageRoom = () => {
                     setFirstLevelValue,
                   }}
                 />
-                <div style={{ margin: 'auto' }}>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    className={classes.button}
-                    startIcon={<Delete />}
-                  >
-                    Xóa
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                    endIcon={<Create />}
-                  >
-                    Chỉnh Sửa
-                  </Button>
-                </div>
+                {!currentRoomID && (
+                  <>
+                    <Button
+                      onClick={handleCreateRoom}
+                      style={{ margin: '30px 0px 15px' }}
+                      className={classes.button}
+                      endIcon={<Create />}
+                    >
+                      Thêm Phòng
+                    </Button>
+                  </>
+                )}
               </Paper>
             </section>
             <section className="main__right">
@@ -208,17 +251,48 @@ const ManageRoom = () => {
                     <Title>Danh Sách Phòng</Title>
                   </TableHead>
                   <TableBody>
-                    {Object.keys(allRooms).map(roomKey => (
-                      <TableRow
-                        className="table_row"
-                        onClick={() => setCurrentRoomID(roomKey)}
-                        key={roomKey}
-                      >
-                        <TableCell>{allRooms[roomKey].name}</TableCell>
-                      </TableRow>
-                    ))}
+                    {rooms &&
+                      Object?.keys(rooms)?.map(roomKey => {
+                        if (roomKey === 'currentRoom') return null;
+                        return (
+                          <TableRow
+                            className="table_row"
+                            onClick={() => setCurrentRoomID(roomKey)}
+                            key={roomKey}
+                          >
+                            <TableCell>{rooms[roomKey]?.name}</TableCell>
+                          </TableRow>
+                        );
+                      })}
                   </TableBody>
                 </Table>
+                {currentRoomID && (
+                  <div style={{ margin: 'auto' }}>
+                    <Button
+                      variant="contained"
+                      onClick={() => setCurrentRoomID('')}
+                      className={classes.button}
+                    >
+                      Hủy
+                    </Button>
+                    <Button
+                      variant="contained"
+                      onClick={handleDeleteRoom}
+                      className={classes.button}
+                      startIcon={<Delete />}
+                    >
+                      Xóa
+                    </Button>
+                    <Button
+                      variant="contained"
+                      onClick={handleUpdateRoom}
+                      className={classes.button}
+                      endIcon={<Create />}
+                    >
+                      Chỉnh Sửa
+                    </Button>
+                  </div>
+                )}
               </Paper>
             </section>
           </div>

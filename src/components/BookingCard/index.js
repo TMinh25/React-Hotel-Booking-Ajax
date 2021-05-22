@@ -10,7 +10,10 @@ const BookingCard = props => {
     holidayPrice,
     roomID,
     bookingData,
-    refreshBookingData,
+    setBookingData,
+    clearBookingData,
+    setTotalPriceInBooking,
+    // refreshBookingData,
   } = props;
   return (
     <div className="booking-card">
@@ -21,11 +24,16 @@ const BookingCard = props => {
           holidayPrice={holidayPrice}
         />
         <BookingForm
-          normalDayPrice={normalDayPrice}
-          holidayPrice={holidayPrice}
-          roomID={roomID}
-          bookingData={bookingData}
-          refreshBookingData={refreshBookingData}
+          {...{
+            normalDayPrice,
+            holidayPrice,
+            roomID,
+            bookingData,
+            setBookingData,
+            clearBookingData,
+            setTotalPriceInBooking,
+            // refreshBookingData,
+          }}
         />
       </div>
     </div>

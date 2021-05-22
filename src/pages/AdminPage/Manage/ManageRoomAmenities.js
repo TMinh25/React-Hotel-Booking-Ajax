@@ -23,21 +23,20 @@ const ManageRoomAmenities = props => {
     petFriendly,
   } = amenities;
 
-  useEffect(() => {
-    console.log(amenities);
-  }, [amenities]);
+  // useEffect(() => {
+  //   console.log(amenities);
+  // }, [amenities]);
 
   const handleChange = e => {
     const { name } = e.target;
-    console.log(e.target);
-    console.log(name, !amenities[name]);
+    // console.log(e.target);
+    // console.log(name, !amenities[name]);
     setAmenities({ name, value: !amenities[name] });
   };
 
   return (
-    <div className="room-amenities">
-      {/* <li className={`room-amenities__item ${wifi ? '' : 'non-available'}`}> */}
-
+    <>
+      <span className="room-info__check-title">Tiện Nghi</span>
       <FormControl component="fieldset">
         <FormGroup
           className="room-amenities__list"
@@ -248,7 +247,7 @@ const ManageRoomAmenities = props => {
           />
         </FormGroup>
       </FormControl>
-    </div>
+    </>
   );
 };
 

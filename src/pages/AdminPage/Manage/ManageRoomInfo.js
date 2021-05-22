@@ -1,15 +1,14 @@
 import {
   Button,
   Divider,
+  Input,
   NativeSelect,
-  Select,
   TextareaAutosize,
   TextField,
 } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
-import TimePicker from 'react-time-picker';
-
-import LineBreak from '../../../components/LineBreak/index';
+import { TimePicker } from '@material-ui/pickers';
+import React from 'react';
+import { format, set } from 'date-fns';
 
 const ManageRoomInfo = ({
   descriptionShort,
@@ -39,80 +38,66 @@ const ManageRoomInfo = ({
     setBed(bed);
   };
 
-  useEffect(() => {
-    console.log(descriptionShort);
-    console.log(checkInAndOut);
-  }, [descriptionShort, checkInAndOut]);
-
-  const CheckInAndOutHourPicker = ({ value, onChange }) => {
-    return (
-      <TimePicker
-        onChange={onChange}
-        value={value}
-        disableClock
-        format="HH:mm"
-      />
-    );
-  };
-
   function onChangeCheckInEarly(value) {
-    setCheckInAndOut('checkInEarly', value);
+    setCheckInAndOut('checkInEarly', format(value, 'HH:mm'));
   }
 
   function onChangeCheckInLate(value) {
-    setCheckInAndOut('checkInLate', value);
+    setCheckInAndOut('checkInLate', format(value, 'HH:mm'));
   }
 
   function onChangeCheckOut(value) {
-    setCheckInAndOut('checkOut', value);
+    setCheckInAndOut('checkOut', format(value, 'HH:mm'));
   }
 
   return (
     <>
       <div className="room-info">
-        <label>Tên Phòng</label>
-        <input
-          type="text"
-          name="name"
+        <span className="room-info__check-title">Tên Phòng</span>
+        <TextField
+          id="outlined-margin-dense"
+          margin="dense"
+          variant="outlined"
+          fullWidth
+          placeholder="Tên Phòng"
           value={name}
           onChange={setFirstLevelValue}
-          className="input_manage"
-          style={{ width: '100%' }}
         />
         <ul className="room-info__intro-list">
           <li className="room-info__intro-item">
-            Số khách:{' '}
-            <input
+            <Input
+              placeholder="Số Khách Ít Nhất"
+              inputProps={{ 'aria-label': 'description' }}
               type="number"
               name="guestMin"
               value={guestMin}
               onChange={setDescriptionShort}
-              className="input_manage"
             />{' '}
             -{' '}
-            <input
+            <Input
+              placeholder="Số Khách Nhiều Nhất"
+              inputProps={{ 'aria-label': 'description' }}
               type="number"
               name="guestMax"
               value={guestMax}
               onChange={setDescriptionShort}
-              className="input_manage"
             />
           </li>
           <li className="room-info__intro-item">
-            Diện tích:{' '}
-            <input
+            <Input
+              placeholder="Diện Tích"
+              inputProps={{ 'aria-label': 'description' }}
               type="number"
               name="footage"
               value={footage}
               onChange={setDescriptionShort}
-              className="input_manage"
-            />{' '}
+            />
             m²
           </li>
-          <li className="room-info__intro-item">
+          <li style={{ margin: '15px 0px' }} className="room-info__intro-item">
             Giường: <Button onClick={addBed}>Thêm Giường</Button>
-            {bed.map((b, index) => (
-              <div>
+            {bed?.map((b, index) => (
+              <div style={{ margin: 10 }}>
                 <NativeSelect
                   key={index}
                   value={b}
@@ -130,38 +115,50 @@ const ManageRoomInfo = ({
             ))}{' '}
           </li>
           <li className="room-info__intro-item">
-            Phòng tắm riêng:{' '}
-            <input
+            <Input
+              placeholder="Phòng Tắm Riêng"
+              inputProps={{ 'aria-label': 'description' }}
               type="number"
               name="privateBath"
               value={privateBath}
               onChange={setDescriptionShort}
-              className="input_manage"
             />
           </li>
         </ul>
-        <label>Mô tả</label>
-        <TextareaAutosize
-          style={{ width: '100%', border: '1px solid #e4e4e4' }}
+        <TextField
+          id="outlined-multiline-static"
+          label="Mô Tả"
+          placeholder="Mô tả sơ bộ căn phòng"
+          multiline
+          fullWidth
+          rows={4}
+          variant="outlined"
           name="description"
           value={description}
           onChange={setFirstLevelValue}
-          rowsMin={4}
-          placeholder="Mô tả sơ bộ căn phòng"
         />
-        <Divider className="divider" />
-        <h2>Giờ CheckIn và CheckOut</h2>
         <div className="room-info__checks">
           <div className="room-info__check">
             <span className="room-info__check-title">Check in</span>
             <span className="room-info__check-time">
-              <CheckInAndOutHourPicker
+              <TimePicker
+                ampm={false}
+                margin="normal"
+                label="Check In Sớm"
+                value={set(new Date(), {
+                  hours: checkInEarly.split(':')[0],
+                  minutes: checkInEarly.split(':')[1],
+                })}
                 onChange={onChangeCheckInEarly}
-                value={checkInEarly}
-              />{' '}
-              -{' '}
-              <CheckInAndOutHourPicker
-                value={checkInLate}
+              />
+              <TimePicker
+                ampm={false}
+                margin="normal"
+                label="Check In Muộn"
+                value={set(new Date(), {
+                  hours: checkInLate.split(':')[0],
+                  minutes: checkInLate.split(':')[1],
+                })}
                 onChange={onChangeCheckInLate}
               />
             </span>
@@ -169,8 +166,14 @@ const ManageRoomInfo = ({
           <div className="room-info__check">
             <span className="room-info__check-title">Check out</span>
             <span className="room-info__check-time">
-              <CheckInAndOutHourPicker
-                value={checkOut}
+              <TimePicker
+                ampm={false}
+                margin="normal"
+                label="Check Out"
+                value={set(new Date(), {
+                  hours: checkOut.split(':')[0],
+                  minutes: checkOut.split(':')[1],
+                })}
                 onChange={onChangeCheckOut}
               />
             </span>

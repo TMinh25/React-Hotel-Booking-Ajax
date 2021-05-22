@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Title from './Title';
 import { useSelector } from 'react-redux';
+import { numberWithCommas } from '../../../utils';
 
 const useStyles = makeStyles({
   depositContext: {
@@ -18,7 +19,7 @@ export default function TotalIncome() {
     <React.Fragment>
       <Title>Tổng Thu</Title>
       <Typography component="p" variant="h4">
-        VNĐ {statistic.totalIncome}
+        {numberWithCommas(statistic.totalIncome)} VNĐ
       </Typography>
       <Typography color="textSecondary" className={classes.depositContext}>
         tính đến ngày {new Date().toLocaleDateString('vi-VN')}

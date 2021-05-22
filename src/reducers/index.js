@@ -1,14 +1,14 @@
 import { combineReducers } from '@reduxjs/toolkit';
-// import notebooks from './notebooks';
-// import notes from './notes';
-// import note from './note';
-// import theme from './theme';
-// import modal from './modal';
-// import sidebar from './sidebar';
-import user from './user';
 import statistic from './statistic';
+import loading from './loading';
+import rooms from './rooms';
+import bookings from './bookings';
+import { firebaseReducer } from 'react-redux-firebase';
 
 export default combineReducers({
-  user,
   statistic,
+  loading,
+  rooms,
+  bookings,
+  firebase: firebaseReducer,
 });

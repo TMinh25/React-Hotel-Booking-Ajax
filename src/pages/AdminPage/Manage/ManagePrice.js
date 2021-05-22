@@ -4,6 +4,7 @@ import {
   FormControlLabel,
   FormGroup,
   FormLabel,
+  Input,
 } from '@material-ui/core';
 import { CheckBox } from '@material-ui/icons';
 import React, { useEffect } from 'react';
@@ -14,23 +15,25 @@ const ManagePrice = props => {
     <>
       <div>
         Giá Ngày Thường:{' '}
-        <input
+        <Input
+          placeholder="Phòng Tắm Riêng"
+          inputProps={{ 'aria-label': 'description' }}
           type="number"
           name="normalDayPrice"
           value={normalDayPrice}
           onChange={setFirstLevelValue}
-          className="input_manage"
         />{' '}
         VNĐ
       </div>
       <div>
         Giá Ngày Lễ / Ngày Nghỉ:{' '}
-        <input
+        <Input
+          placeholder="Phòng Tắm Riêng"
+          inputProps={{ 'aria-label': 'description' }}
           type="number"
           name="holidayPrice"
           value={holidayPrice}
           onChange={setFirstLevelValue}
-          className="input_manage"
         />{' '}
         VNĐ
       </div>

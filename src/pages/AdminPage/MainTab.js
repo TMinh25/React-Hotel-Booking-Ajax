@@ -1,23 +1,72 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import TotalIncome from './Dashboard/Deposits';
 import Orders from './Dashboard/Orders';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core';
-
-const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: theme.spacing(2),
-    display: 'flex',
-    overflow: 'auto',
-    flexDirection: 'column',
-  },
-}));
+import { Backdrop, CircularProgress } from '@material-ui/core';
+import useStyles from '../../hooks/useStyles';
+import { getAllBooking, getTodayConfirmationBooking } from '../../firebase';
+import { isToday, statusCode } from '../../utils';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateBookingStatus } from '../../reducers/bookings';
 
 function MainTab() {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const [todayBooking, setTodayBooking] = useState({});
+  const bookings = useSelector(state => state.bookings);
+
+  async function getBookings() {
+    if (bookings) {
+      const result = {};
+      Object.keys(bookings).forEach(bookingKey => {
+        const { timestamp } = bookings[bookingKey];
+        if (
+          isToday(timestamp) &&
+          bookings[bookingKey]?.status === statusCode.reserveConfirmation
+        ) {
+          result[bookingKey] = bookings[bookingKey];
+        }
+      });
+      setTodayBooking(result);
+    }
+  }
+
+  useEffect(() => {
+    getBookings();
+
+    if (bookings) {
+      for (const [key, value] of Object.entries(bookings)) {
+        const startDate = new Date(value.reserveDateStart);
+        const status = value.status;
+
+        if (isToday(startDate) && status === statusCode.reserveAccept) {
+          dispatch(
+            updateBookingStatus({
+              id: key,
+              status: statusCode.checkingIn,
+            }),
+          );
+        } else if (
+          isToday(startDate.setDate(startDate.getDate() + 1)) &&
+          status === statusCode.reserveAccept
+        ) {
+          dispatch(
+            updateBookingStatus({
+              id: key,
+              status: statusCode.notCheckIn,
+            }),
+          );
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bookings]);
+
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  const loading = useSelector(state => state.loading);
+
   return (
     <>
       <Grid container spacing={3}>
@@ -29,11 +78,12 @@ function MainTab() {
         <Grid item xs={12} md={4} lg={3}>
           <Paper className={fixedHeightPaper}>
             <TotalIncome />
+            {loading}
           </Paper>
         </Grid>
         <Grid item xs={12}>
           <Paper className={classes.paper}>
-            <Orders />
+            <Orders {...{ bookings: todayBooking }} />
           </Paper>
         </Grid>
       </Grid>

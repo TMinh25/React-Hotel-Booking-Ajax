@@ -7,60 +7,32 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
-import { getTodayBooking } from '../../../firebase';
-
-function getReserveStartAndEnd(start, end) {
-  const timeStart = new Date(start),
-    timeEnd = new Date(end);
-
-  console.log(timeStart, timeEnd);
-  var res;
-
-  if (timeStart.getMonth() === timeEnd.getMonth()) {
-    res = `${timeStart.getDate()}-${timeEnd.getDate()} tháng ${timeStart.getMonth() +
-      1}`;
-  } else if (timeStart.getMonth() !== timeEnd.getMonth()) {
-    res = `${timeStart.getDate()} tháng ${timeStart.getMonth() +
-      1}-${timeEnd.getDate()} tháng ${timeEnd.getMonth() + 1}`;
-  }
-  return res;
-}
+import { getTodayConfirmationBooking } from '../../../firebase';
+import { getReserveStartAndEnd } from '../../../utils';
+import useStyles from '../../../hooks/useStyles';
 
 // Generate Order Data
-function createData({ id, timestamp, name, tel, room, reserveStartAndEnd }) {
-  return { id, timestamp, name, tel, room, reserveStartAndEnd };
+function createData({
+  id,
+  timestamp,
+  guestName,
+  tel,
+  room,
+  reserveStartAndEnd,
+}) {
+  return { id, timestamp, guestName, tel, room, reserveStartAndEnd };
 }
 
-function preventDefault(event) {
-  event.preventDefault();
-}
-
-const useStyles = makeStyles(theme => ({
-  seeMore: {
-    marginTop: theme.spacing(3),
-  },
-}));
-
-export default function Orders() {
+export default function Orders(props) {
   const classes = useStyles();
-
-  const [bookings, setBookings] = useState({});
-
-  useEffect(() => {
-    async function getBookings() {
-      const res = await getTodayBooking();
-      console.log(res);
-      setBookings(res);
-    }
-    getBookings();
-  }, []);
+  const { bookings } = props;
 
   const rows = useMemo(() => {
     return Object.values(bookings).map((booking, id) => {
       return createData({
         id,
-        name: booking.name,
-        timestamp: new Date().toLocaleTimeString(),
+        guestName: booking.guestName,
+        timestamp: new Date(booking.timestamp).toLocaleTimeString(),
         room: booking.room.name,
         tel: booking.tel,
         reserveStartAndEnd: getReserveStartAndEnd(
@@ -71,14 +43,14 @@ export default function Orders() {
     });
   }, [bookings]);
 
-  useEffect(() => {
-    console.log(rows);
-  }, [rows]);
+  // useEffect(() => {
+  //   console.log(rows);
+  // }, [rows]);
 
   let { url } = useRouteMatch();
 
   return (
-    <React.Fragment>
+    <>
       <Title>Khách Đặt Phòng Trong Hôm Nay</Title>
       <Table size="small">
         <TableHead>
@@ -91,10 +63,10 @@ export default function Orders() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map(row => (
+          {rows.reverse().map(row => (
             <TableRow key={row.id}>
               <TableCell>{row.timestamp}</TableCell>
-              <TableCell>{row.name}</TableCell>
+              <TableCell>{row.guestName}</TableCell>
               <TableCell>{row.tel}</TableCell>
               <TableCell>{row.room}</TableCell>
               <TableCell align="right">{row.reserveStartAndEnd}</TableCell>
@@ -105,6 +77,6 @@ export default function Orders() {
       <div className={classes.seeMore}>
         <Link to={`${url}/reserve`}>Chi tiết</Link>
       </div>
-    </React.Fragment>
+    </>
   );
 }

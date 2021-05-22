@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { Backdrop, makeStyles } from '@material-ui/core';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import Lightbox from 'react-image-lightbox';
+import { uploadFireStore } from '../../../firebase';
 
 const thumbsContainer = {
   display: 'flex',
@@ -33,31 +35,99 @@ const img = {
   height: '100%',
 };
 
+const baseStyle = {
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: '20px',
+  borderWidth: 2,
+  borderRadius: 2,
+  borderColor: '#eeeeee',
+  borderStyle: 'dashed',
+  backgroundColor: '#fafafa',
+  color: '#bdbdbd',
+  outline: 'none',
+  transition: 'border .24s ease-in-out',
+};
+
+const activeStyle = {
+  borderColor: '#2196f3',
+};
+
+const acceptStyle = {
+  borderColor: '#00e676',
+};
+
+const rejectStyle = {
+  borderColor: '#ff1744',
+};
+
+const useStyles = makeStyles(theme => ({
+  paper: {
+    padding: theme.spacing(2),
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  button: {
+    margin: theme.spacing(1),
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
+  },
+}));
+
 function DropzonePreview(props) {
-  const { imageFiles, setImageFiles, currentRoomID } = props;
+  const {
+    imageFiles,
+    setImageFiles,
+    previewFiles,
+    setPreviewFiles,
+    currentRoomID,
+  } = props;
+  const styles = useStyles();
   const [isLightBoxOpen, setIsLightBoxOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
-  const { getRootProps, getInputProps } = useDropzone({
+  const {
+    getRootProps,
+    getInputProps,
+    isDragActive,
+    isDragAccept,
+    isDragReject,
+  } = useDropzone({
     accept: 'image/*',
     onDrop: acceptedFiles => {
-      setImageFiles(
-        acceptedFiles.map(file =>
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          }),
-        ),
+      setPreviewFiles(
+        acceptedFiles.map(file => {
+          return { preview: URL.createObjectURL(file), image: file };
+        }),
       );
     },
   });
 
-  const thumbs = imageFiles.map((file, index) => (
-    <div style={thumb} key={file.name} onClick={() => onOpenLightBox(index)}>
+  // useEffect(() => {
+  //   console.log(imageFiles, previewFiles);
+  // }, [imageFiles, previewFiles]);
+
+  const style = useMemo(
+    () => ({
+      ...baseStyle,
+      ...(isDragActive ? activeStyle : {}),
+      ...(isDragAccept ? acceptStyle : {}),
+      ...(isDragReject ? rejectStyle : {}),
+    }),
+    [isDragActive, isDragReject, isDragAccept],
+  );
+
+  const thumbFiles = previewFiles.length
+    ? previewFiles.map(file => file.preview)
+    : imageFiles;
+
+  const thumbs = thumbFiles?.map((file, index) => (
+    <div style={thumb} key={index} onClick={() => onOpenLightBox(index)}>
       <div style={thumbInner}>
-        <img
-          src={currentRoomID ? file : file.preview}
-          alt="preview"
-          style={img}
-        />
+        <img src={file?.preview ?? file} alt="preview" style={img} />
       </div>
     </div>
   ));
@@ -75,15 +145,17 @@ function DropzonePreview(props) {
   useEffect(
     () => () => {
       // Make sure to revoke the data uris to avoid memory leaks
-      imageFiles.forEach(file => URL.revokeObjectURL(file.preview));
+      previewFiles.forEach(file => {
+        URL.revokeObjectURL(file.preview);
+      });
     },
-    [imageFiles],
+    [previewFiles],
   );
 
   return (
     <>
       <section className="container">
-        <div {...getRootProps({ className: 'dropzone' })}>
+        <div {...getRootProps({ className: 'dropzone', style })}>
           <input {...getInputProps()} />
           <p>Thả ảnh vào đây, hoặc nhấp để chọn ảnh</p>
         </div>
@@ -91,16 +163,26 @@ function DropzonePreview(props) {
       </section>
       {isLightBoxOpen && (
         <Lightbox
+          clickOutsideToClose
           imageLoadErrorMessage="Không tải được ảnh"
-          mainSrc={imageFiles[photoIndex].preview ?? imageFiles[photoIndex]}
+          mainSrc={
+            previewFiles.length
+              ? previewFiles[photoIndex]?.preview
+              : imageFiles[photoIndex]
+          }
           nextSrc={
-            imageFiles[(photoIndex + 1) % imageFiles.length].preview ??
-            imageFiles[(photoIndex + 1) % imageFiles.length]
+            previewFiles.length
+              ? previewFiles[(photoIndex + 1) % imageFiles.length]?.preview
+              : imageFiles[(photoIndex + 1) % imageFiles.length]
           }
           prevSrc={
-            imageFiles[(photoIndex + imageFiles.length - 1) % imageFiles.length]
-              .preview ??
-            imageFiles[(photoIndex + imageFiles.length - 1) % imageFiles.length]
+            previewFiles.length
+              ? previewFiles[
+                  (photoIndex + imageFiles.length - 1) % imageFiles.length
+                ]?.preview
+              : imageFiles[
+                  (photoIndex + imageFiles.length - 1) % imageFiles.length
+                ]
           }
           onCloseRequest={onCloseLightBox}
           onMovePrevRequest={onMovePrevRequest}
