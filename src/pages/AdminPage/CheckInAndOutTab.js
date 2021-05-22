@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { getCheckInAndOutBooking } from '../../firebase';
 import './index.scss';
 import BookingDataTable from './Components/BookingDataTable';
-import { Button } from '@material-ui/core';
 import { defaultFailCB, isToday } from '../../utils';
 import { useSelector } from 'react-redux';
 
 function CheckInAndOutTab(props) {
   const [reserveData, setReserveData] = useState({});
   const bookings = useSelector(state => state.bookings);
-
-  async function getBookings() {}
 
   useEffect(() => {
     try {

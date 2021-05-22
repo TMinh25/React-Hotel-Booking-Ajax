@@ -13,7 +13,6 @@ const BookingCard = props => {
     setBookingData,
     clearBookingData,
     setTotalPriceInBooking,
-    // refreshBookingData,
   } = props;
   return (
     <div className="booking-card">
@@ -32,7 +31,6 @@ const BookingCard = props => {
             setBookingData,
             clearBookingData,
             setTotalPriceInBooking,
-            // refreshBookingData,
           }}
         />
       </div>

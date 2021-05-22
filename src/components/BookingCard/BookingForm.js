@@ -228,11 +228,13 @@ export const BookingForm = props => {
           </div>
           {bookingData && (
             <TotalAmount
-              normalDayPrice={normalDayPrice}
-              holidayPrice={holidayPrice}
+              {...{
+                normalDayPrice,
+                holidayPrice,
+                setTotalPriceInBooking,
+              }}
               startDate={reserveDateStart}
               endDate={reserveDateEnd}
-              setTotalPriceInBooking={setTotalPriceInBooking}
             />
           )}
           <div className="form__btn-wrapper">
@@ -244,12 +246,14 @@ export const BookingForm = props => {
       </div>
       {modalState.isModalOpen && (
         <Modal
-          modalRef={modalRef}
+          {...{
+            modalRef,
+            closeModal,
+            handleClickOutside,
+            bookingSuccess,
+          }}
           modalIsOpen={modalState.isModalOpen}
           modalMessage={modalState.modalMessage}
-          closeModal={closeModal}
-          handleClickOutside={handleClickOutside}
-          bookingSuccess={bookingSuccess}
         />
       )}
     </>

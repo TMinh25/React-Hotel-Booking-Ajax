@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './index.scss';
 import BookingDataTable from './Components/BookingDataTable';
-import { Button, Checkbox, FormControlLabel } from '@material-ui/core';
+import { Checkbox, FormControlLabel } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { isBetween } from '../../utils';
 

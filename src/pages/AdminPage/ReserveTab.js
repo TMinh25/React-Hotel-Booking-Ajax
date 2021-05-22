@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { getReservationBooking } from '../../firebase';
 import './index.scss';
 import BookingDataTable from './Components/BookingDataTable';
-import { defaultFailCB, isBetween, statusCode } from '../../utils';
+import { isBetween, statusCode } from '../../utils';
 import { useSelector } from 'react-redux';
 import { Checkbox, FormControlLabel } from '@material-ui/core';
 
@@ -43,6 +42,7 @@ const ReserveTab = props => {
     } else if (reserveData && !isBookingToday) {
       setReserveData(bookings);
     }
+    // eslint-disable-next-line
   }, [bookings, isBookingToday]);
 
   const ToolbarItem = () => {

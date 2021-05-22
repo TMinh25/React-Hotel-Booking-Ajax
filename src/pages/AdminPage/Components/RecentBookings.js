@@ -1,13 +1,11 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
-import { getTodayConfirmationBooking } from '../../../firebase';
 import { getReserveStartAndEnd } from '../../../utils';
 import useStyles from '../../../hooks/useStyles';
 
@@ -23,7 +21,7 @@ function createData({
   return { id, timestamp, guestName, tel, room, reserveStartAndEnd };
 }
 
-export default function Orders(props) {
+export default function RecentBookings(props) {
   const classes = useStyles();
   const { bookings } = props;
 
@@ -42,10 +40,6 @@ export default function Orders(props) {
       });
     });
   }, [bookings]);
-
-  // useEffect(() => {
-  //   console.log(rows);
-  // }, [rows]);
 
   let { url } = useRouteMatch();
 

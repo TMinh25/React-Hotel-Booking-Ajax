@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { Ellipsis } from 'react-spinners-css';
@@ -30,6 +30,7 @@ const MainPage = props => {
     if (rooms) {
       setState({ ...state, dataIsFetched: true });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rooms]);
 
   // useEffect(() => {
@@ -45,7 +46,7 @@ const MainPage = props => {
 
   return (
     <>
-      {!allDownloaded && <splashScreen />}
+      {!allDownloaded && <SplashScreen />}
       {rooms && (
         <div
           className={`container wrapper-l ${

@@ -1,13 +1,9 @@
-import {
-  // configureStore,
-  compose,
-  createStore,
-  applyMiddleware,
-} from '@reduxjs/toolkit';
+import { compose, createStore, applyMiddleware } from '@reduxjs/toolkit';
 import rootReducer from './reducers';
 import { getFirebase } from 'react-redux-firebase';
 import thunk from 'redux-thunk';
 
+// Chrome Redux Devtools extension
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const middlewares = [thunk.withExtraArgument(getFirebase)];
@@ -17,6 +13,8 @@ export default createStore(
   {},
   composeEnhancers(applyMiddleware(...middlewares)),
 );
+
+// @redux/toolkit configureStore
 
 // configureStore({
 //   reducer: rootReducer,

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import Dashboard from './Dashboard/Dashboard';
+import NavAndDrawer from './Components/NavAndDrawer';
 import { useSelector } from 'react-redux';
 import Login from './Login';
 import Router from './Router';
@@ -10,9 +10,9 @@ function ProtectedRoutes() {
 
   return (
     <>
-      <Dashboard>
+      <NavAndDrawer>
         <Router />
-      </Dashboard>
+      </NavAndDrawer>
       {loading && <Loading />}
     </>
   );
@@ -31,9 +31,6 @@ const AdminPage = () => {
   }, []);
 
   const auth = useSelector(state => state.firebase.auth);
-
-  // console.log(user?.displayName);
-  // console.log(user);
 
   if (!auth.isLoaded) return <Loading />;
 

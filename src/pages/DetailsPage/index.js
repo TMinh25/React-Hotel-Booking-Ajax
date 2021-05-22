@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import InfoSkeleton from '../../components/RoomInfo/skeleton';
 import MosaicSkeleton from '../../components/MosaicHeader/skeleton';
@@ -8,24 +8,20 @@ import RoomInfo from '../../components/RoomInfo/index';
 import RoomAmenities from '../../components/RoomAmenities/index';
 import BookingCard from '../../components/BookingCard/index';
 import { useParams } from 'react-router';
-import { defaultFailCB, statusCode } from '../../utils';
+import { statusCode } from '../../utils';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  fetchAllRooms,
-  getSingleRoom,
-  setCurrentRoom,
-} from '../../reducers/rooms';
-import { SplashScreen } from '../MainPage';
+import { getSingleRoom } from '../../reducers/rooms';
+import { useCallback } from 'react';
 
 const DetailsPage = props => {
-  // const [currentRoom, setCurrentRoom] = useState({});
   const { roomID } = useParams();
   const dispatch = useDispatch();
   const currentRoom = useSelector(state => state.rooms?.currentRoom);
   const [totalPrice, setTotalPrice] = useState(0);
+
   const initialState = {
     guestName: '',
-    guestCount: null,
+    guestCount: 0,
     reserveDateStart: null,
     reserveDateEnd: null,
     room: { id: roomID, name: currentRoom?.name },
@@ -43,6 +39,7 @@ const DetailsPage = props => {
       ...prevState,
       room: { id: roomID, name: currentRoom?.name },
     }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentRoom]);
 
   const clearBookingData = () => setBookingData(initialState);
@@ -54,11 +51,7 @@ const DetailsPage = props => {
     setBookingData({ ...bookingData, totalPrice: val });
   }
 
-  // useEffect(() => {
-  //   console.log(bookingData);
-  // }, [bookingData]);
-
-  const getCurrentRoomData = () => {
+  const getCurrentRoomData = useCallback(() => {
     try {
       if (roomID) {
         dispatch(getSingleRoom(roomID));
@@ -75,10 +68,11 @@ const DetailsPage = props => {
       setRoomIsLoading(false);
     }
     // eslint-disable-next-line
-  };
+  }, []);
 
   useEffect(() => {
     getCurrentRoomData();
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -105,7 +99,6 @@ const DetailsPage = props => {
                 setBookingData,
                 clearBookingData,
                 setTotalPriceInBooking,
-                // refreshBookingData,
               }}
             />
           </section>

@@ -31,10 +31,6 @@ function useFetchFirebase(firebaseFetchFunction = new Promise(), input = null) {
     }
   }, [firebaseFetchFunction, input, isLoading]);
 
-  // useEffect(() => {
-  //   console.log(isLoading, data, error);
-  // }, [isLoading, data, error]);
-
   return { isLoading, setIsLoading, data, error };
 }
 

@@ -1,11 +1,6 @@
 import React, { useMemo } from 'react';
 import MUIDataTable from 'mui-datatables';
-import {
-  defaultFailCB,
-  defaultSuccessCB,
-  getReserveStartAndEnd,
-  statusString,
-} from '../../../utils';
+import { getReserveStartAndEnd, statusString } from '../../../utils';
 import {
   Backdrop,
   CircularProgress,
@@ -144,12 +139,14 @@ function BookingDataTable(props) {
   }, [data]);
 
   const onRowsDelete = async rowsDeleted => {
+    // get array of uid of each row in firebase database uid
     const rowsToDelete = rowsDeleted.data.map(d => rows[d.dataIndex][1]);
 
     rowsToDelete.map(rowID => dispatch(removeBooking(rowID)));
   };
 
   const onRowClick = rowData => {
+    // rowData uid
     const bookingID = rowData[1];
     history.push(`booking/${bookingID}`);
   };
@@ -169,7 +166,7 @@ function BookingDataTable(props) {
   );
 
   const setRowsColor = (row, dataIndex, rowIndex) => {
-    // console.log(row[6]);
+    // row Trạng Thái
     switch (row[7]) {
       case statusString.reserveConfirmation:
       case statusString.checkingIn:

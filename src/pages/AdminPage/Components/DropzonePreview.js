@@ -1,8 +1,6 @@
-import { Backdrop, makeStyles } from '@material-ui/core';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import Lightbox from 'react-image-lightbox';
-import { uploadFireStore } from '../../../firebase';
 
 const thumbsContainer = {
   display: 'flex',
@@ -63,30 +61,8 @@ const rejectStyle = {
   borderColor: '#ff1744',
 };
 
-const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: theme.spacing(2),
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  button: {
-    margin: theme.spacing(1),
-  },
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: '#fff',
-  },
-}));
-
 function DropzonePreview(props) {
-  const {
-    imageFiles,
-    setImageFiles,
-    previewFiles,
-    setPreviewFiles,
-    currentRoomID,
-  } = props;
-  const styles = useStyles();
+  const { imageFiles, previewFiles, setPreviewFiles } = props;
   const [isLightBoxOpen, setIsLightBoxOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
   const {

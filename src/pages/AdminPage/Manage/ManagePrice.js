@@ -1,13 +1,5 @@
-import {
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  FormLabel,
-  Input,
-} from '@material-ui/core';
-import { CheckBox } from '@material-ui/icons';
-import React, { useEffect } from 'react';
+import { Input } from '@material-ui/core';
+import React from 'react';
 
 const ManagePrice = props => {
   const { normalDayPrice, holidayPrice, setFirstLevelValue } = props;

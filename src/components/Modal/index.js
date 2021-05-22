@@ -1,8 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import LineBreak from '../LineBreak/index';
-
 const Modal = props => {
   const {
     modalRef,

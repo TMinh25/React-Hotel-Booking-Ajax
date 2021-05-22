@@ -6,15 +6,6 @@ export function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
-// export function isToday(someDate) {
-//   const today = new Date();
-//   return (
-//     someDate.getDate() === today.getDate() &&
-//     someDate.getMonth() === today.getMonth() &&
-//     someDate.getFullYear() === today.getFullYear()
-//   );
-// }
-
 export function isToday(inputDate) {
   const today = new Date();
   const date = new Date(inputDate);

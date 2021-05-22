@@ -3,10 +3,8 @@ import {
   FormControl,
   FormControlLabel,
   FormGroup,
-  FormLabel,
 } from '@material-ui/core';
-import { CheckBox } from '@material-ui/icons';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 const ManageRoomAmenities = props => {
   const { amenities, setAmenities } = props;
@@ -29,8 +27,6 @@ const ManageRoomAmenities = props => {
 
   const handleChange = e => {
     const { name } = e.target;
-    // console.log(e.target);
-    // console.log(name, !amenities[name]);
     setAmenities({ name, value: !amenities[name] });
   };
 

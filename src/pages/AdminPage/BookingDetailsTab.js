@@ -1,7 +1,7 @@
 import {
   Button,
   Grid,
-  IconButton,
+  // IconButton,
   Paper,
   Step,
   StepButton,
@@ -11,12 +11,9 @@ import {
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
-import Loading from '../../components/Loading';
-import useFetchFirebase from '../../hooks/useFetchFirebase';
 import useStyles from '../../hooks/useStyles';
-import { Create } from '@material-ui/icons';
+// import { Create } from '@material-ui/icons';
 import {
-  defaultFailCB,
   isToday,
   numberWithCommas,
   statusCode,
@@ -25,7 +22,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchSingleBookingData,
-  clearCurrentBookingData,
   updateBookingStatus,
 } from '../../reducers/bookings';
 
@@ -33,8 +29,7 @@ function BookingDetailsTab(props) {
   const classes = useStyles();
   const history = useHistory();
   const { bookingID } = useParams();
-  const [bookingData, setBookingData] = useState({});
-  const [isModified, setIsModified] = useState(false);
+  // const [isModified, setIsModified] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
 
   // const { isLoading, data, error } = useFetchFirebase(
@@ -229,17 +224,10 @@ function BookingDetailsTab(props) {
                 </StepButton>
               </Step>
             ))}
-            <IconButton>
+            {/* <IconButton>
               <Create />
-            </IconButton>
+            </IconButton> */}
           </Stepper>
-          {/* <Stepper activeStep={activeStep} className={classes.stepper}>
-            {steps.map(label => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper> */}
           <React.Fragment>
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
@@ -247,7 +235,7 @@ function BookingDetailsTab(props) {
                   required
                   id="guestName"
                   value={currentBookingData?.guestName}
-                  disabled={!isModified}
+                  // disabled={!isModified}
                   label="Họ tên khách hàng"
                   fullWidth
                   autoComplete="cc-name"
@@ -259,7 +247,7 @@ function BookingDetailsTab(props) {
                   name="tel"
                   label="Số Điện Thoại"
                   value={currentBookingData?.tel}
-                  disabled={!isModified}
+                  // disabled={!isModified}
                   fullWidth
                 />
               </Grid>
@@ -269,7 +257,7 @@ function BookingDetailsTab(props) {
                   name="roomName"
                   value={currentBookingData?.room.name}
                   label="Phòng Đặt"
-                  disabled={!isModified}
+                  // disabled={!isModified}
                   fullWidth
                   autoComplete="cc-exp"
                 />
@@ -288,7 +276,7 @@ function BookingDetailsTab(props) {
                   value={new Date(
                     currentBookingData?.reserveDateStart,
                   ).toLocaleDateString('vi-VN')}
-                  disabled={!isModified}
+                  // disabled={!isModified}
                   style={{ width: '50%' }}
                   label="Ngày Check In"
                 />
@@ -298,7 +286,7 @@ function BookingDetailsTab(props) {
                   value={new Date(
                     currentBookingData?.reserveDateEnd,
                   ).toLocaleDateString('vi-VN')}
-                  disabled={!isModified}
+                  // disabled={!isModified}
                   style={{ width: '50%' }}
                   label="Ngày Check Out"
                 />
@@ -310,7 +298,7 @@ function BookingDetailsTab(props) {
                   value={new Date(currentBookingData?.timestamp).toLocaleString(
                     'vi-VN',
                   )}
-                  disabled={!isModified}
+                  // disabled={!isModified}
                   fullWidth
                 />
               </Grid>
@@ -321,7 +309,7 @@ function BookingDetailsTab(props) {
                   value={
                     numberWithCommas(currentBookingData?.totalPrice) + ' VNĐ'
                   }
-                  disabled={!isModified}
+                  // disabled={!isModified}
                   fullWidth
                 />
               </Grid>

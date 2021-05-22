@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import ManageRoomAmenities from './Manage/ManageRoomAmenities';
 import ManageRoomInfo from './Manage/ManageRoomInfo';
-import useInput from '../../hooks/useInput';
-import LineBreak from '../../components/LineBreak';
 import ManagePrice from './Manage/ManagePrice';
-import { PausePresentation, Delete, Create } from '@material-ui/icons';
+import { Delete, Create } from '@material-ui/icons';
 import {
-  Backdrop,
   Button,
-  CircularProgress,
   Divider,
   makeStyles,
   Paper,
@@ -18,9 +14,8 @@ import {
   TableHead,
   TableRow,
 } from '@material-ui/core';
-import Title from './Dashboard/Title';
+import Title from './Components/Title';
 import DropzonePreview from './Components/DropzonePreview';
-import { defaultFailCB, defaultSuccessCB } from '../../utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { offLoading, onLoading } from '../../reducers/loading';
 import {
@@ -31,7 +26,6 @@ import {
   setCurrentRoom,
   updateRoomInfo,
 } from '../../reducers/rooms';
-import { useFirebase } from 'react-redux-firebase';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -49,7 +43,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ManageRoom = () => {
-  const firebase = useFirebase();
   const rooms = useSelector(state => state.rooms);
   const dispatch = useDispatch();
   const initialValue = {
@@ -99,11 +92,6 @@ const ManageRoom = () => {
     dispatch(offLoading());
   }
 
-  function fetchAllRoom() {
-    dispatch(fetchAllRooms());
-    !currentRoomID && dispatch(offLoading());
-  }
-
   useEffect(() => {
     if (currentRoomID === '') {
       dispatch(setCurrentRoom(null));
@@ -116,10 +104,6 @@ const ManageRoom = () => {
     }
     // eslint-disable-next-line
   }, [currentRoomID]);
-
-  // useEffect(() => {
-  //   loading && fetchAllRoom();
-  // }, [loading]);
 
   const {
     amenities,
@@ -184,10 +168,6 @@ const ManageRoom = () => {
   const handleDeleteRoom = () => {
     dispatch(removeRoom(currentRoomID));
   };
-
-  // useEffect(() => {
-  //   console.log(values);
-  // }, [values]);
 
   const classes = useStyles();
 

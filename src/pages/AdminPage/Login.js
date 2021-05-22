@@ -1,6 +1,4 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { useFirebase } from 'react-redux-firebase';
 import { auth } from '../../firebase';
 import useInput from '../../hooks/useInput';
 

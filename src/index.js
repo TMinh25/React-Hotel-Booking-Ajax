@@ -5,8 +5,8 @@ import Router from './components/Router';
 import './base-styles/index.scss';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import store from './store';
-import { Provider, useDispatch, useSelector } from 'react-redux';
+import store from './redux-store';
+import { Provider, useDispatch } from 'react-redux';
 import { offLoading } from './reducers/loading';
 import { fetchAllRooms } from './reducers/rooms';
 import { ReactReduxFirebaseProvider } from 'react-redux-firebase';
@@ -25,6 +25,7 @@ const App = () => {
     dispatch(fetchIncome());
 
     dispatch(offLoading());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

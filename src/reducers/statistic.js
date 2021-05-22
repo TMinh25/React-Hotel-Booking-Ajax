@@ -74,7 +74,7 @@ export function fetchIncome() {
             const month = new Date(booking?.reserveDateEnd).getMonth();
             const currentMonthData = chartData[month];
             chartData[month] = {
-              guest: currentMonthData.guest + Math.round(Math.random() * 5),
+              guest: currentMonthData.guest + booking?.guestCount,
               income: currentMonthData.income + booking?.totalPrice,
             };
           }

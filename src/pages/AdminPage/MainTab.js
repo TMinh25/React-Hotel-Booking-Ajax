@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import TotalIncome from './Dashboard/Deposits';
-import Orders from './Dashboard/Orders';
-import clsx from 'clsx';
-import { Backdrop, CircularProgress } from '@material-ui/core';
+import TotalIncome from './Components/TotalIncome';
+import RecentBookings from './Components/RecentBookings';
 import useStyles from '../../hooks/useStyles';
-import { getAllBooking, getTodayConfirmationBooking } from '../../firebase';
 import { isToday, statusCode } from '../../utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateBookingStatus } from '../../reducers/bookings';
@@ -64,7 +61,6 @@ function MainTab() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookings]);
 
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   const loading = useSelector(state => state.loading);
 
   return (
@@ -76,14 +72,14 @@ function MainTab() {
           </Paper> */}
         </Grid>
         <Grid item xs={12} md={4} lg={3}>
-          <Paper className={fixedHeightPaper}>
+          <Paper className={classes.paper}>
             <TotalIncome />
             {loading}
           </Paper>
         </Grid>
         <Grid item xs={12}>
           <Paper className={classes.paper}>
-            <Orders {...{ bookings: todayBooking }} />
+            <RecentBookings {...{ bookings: todayBooking }} />
           </Paper>
         </Grid>
       </Grid>

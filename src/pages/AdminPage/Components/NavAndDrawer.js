@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
@@ -9,7 +8,6 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
@@ -31,7 +29,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import HomeIcon from '@material-ui/icons/Home';
 import SettingIcon from '@material-ui/icons/Settings';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
-import PeopleIcon from '@material-ui/icons/People';
 import { useHistory, useRouteMatch } from 'react-router';
 import {
   Assessment,
@@ -43,7 +40,7 @@ import useStyles from '../../../hooks/useStyles';
 
 export default function NavAndDrawer(props) {
   const classes = useStyles();
-  let { path, url } = useRouteMatch();
+  let { url } = useRouteMatch();
   const history = useHistory();
 
   const [openDrawer, setOpenDrawer] = useState(true);
@@ -74,7 +71,6 @@ export default function NavAndDrawer(props) {
     }
     setOpenContext(false);
   };
-
   const handleSignOut = () => {
     auth.signOut().then(() => {
       localStorage.setItem('user', JSON.stringify(null));

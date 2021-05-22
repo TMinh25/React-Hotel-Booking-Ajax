@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { subDays, eachDayOfInterval } from 'date-fns';
 import { numberWithCommas } from '../../utils';
@@ -13,45 +13,49 @@ const TotalAmount = props => {
   } = props;
   const [totalNormalNights, setTotalNormalNights] = useState(0);
   const [totalHolidayNights, setTotalHolidayNights] = useState(0);
-  // var totalNormalNights = 0;
-  // var totalHolidayNights = 0;
-  let pricePerDay;
 
   const totalPrice = useMemo(() => {
     if (!startDate || !endDate) return null;
+    let pricePerDay;
     setTotalHolidayNights(0);
     setTotalNormalNights(0);
-    return eachDayOfInterval({
-      start: startDate,
-      end: subDays(endDate, 1),
-    })
-      .map(day => day.getDay(day))
-      .map(day => {
-        const holiday = day === 0 || day === 5 || day === 6;
-
-        if (holiday) {
-          // totalHolidayNights += 1;
-          setTotalHolidayNights(prevState => prevState + 1);
-        } else {
-          // totalNormalNights += 1;
-          setTotalNormalNights(prevState => prevState + 1);
-        }
-
-        pricePerDay = holiday ? holidayPrice : normalDayPrice;
-
-        return pricePerDay;
+    return (
+      // return total price for reservation
+      // with iteration for each day
+      eachDayOfInterval({
+        start: startDate,
+        end: subDays(endDate, 1),
       })
-      .reduce((sum, currentPrice) => {
-        return parseInt(sum) + parseInt(currentPrice);
-      }, 0);
+        // get array of days in reservation
+        .map(day => day.getDay(day))
+        // return array of price for each day
+        .map(day => {
+          // holidays = sunday || friday || saturday
+          const holiday = day === 0 || day === 5 || day === 6;
+
+          if (holiday) {
+            setTotalHolidayNights(totalHolidayNights + 1);
+          } else {
+            setTotalNormalNights(totalNormalNights + 1);
+          }
+
+          pricePerDay = holiday ? holidayPrice : normalDayPrice;
+          return pricePerDay;
+        })
+        // add all of the value to sum
+        .reduce((sum, currentPrice) => {
+          return parseInt(sum) + parseInt(currentPrice);
+        }, 0)
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate, endDate]);
 
-  useEffect(() => {
-    setTotalPriceInBooking(totalPrice + (totalPrice / 100) * 5);
-  }, [totalPrice]);
-
   const VATPrice = useMemo(() => {
+    // set total price for parent
+    setTotalPriceInBooking(totalPrice + (totalPrice / 100) * 5);
+
     return (totalPrice / 100) * 5;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalPrice]);
 
   if (!startDate || !endDate) return null;
