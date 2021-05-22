@@ -11,21 +11,15 @@ _The hotel booking template designed and shared by [edith.hsu](https://z7x2c0v0b
 
 ## What I learned from this project
 
-- [x] Making AJAX API calls (`Get`, `Post`) with Axios
-- [x] Displaying Modal with success and error message from API response
-- [x] Handling React Date Picker with response data
-- [x] Form data validation
-- [x] Formatting date in JS
-- [x] Skeleton screen loading effect
-- [x] CSS grid layout
-- [x] CSS only slider
+- [x] Making Async Await fetch with redux, thunk and react-redux-firebase
+- [x] Manage information with admin page
 
 ## Installation
 
 1. Clone this repo
-2. Run `npm install`
+2. Run `npm install` or `yarn`
 
 ## Development
 
-1. `npm start`: Run the app in development mode.
-2. `npm run build`: Builds the app for production to the build folder.
+1. `yarn start`: Run the app in development mode.
+2. `yarn build`: Builds the app for production to the build folder.
